@@ -4,6 +4,7 @@ import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import axios from "axios";
+import { RecoilRoot } from "recoil";
 
 axios.defaults.withCredentials = true;
 
@@ -12,9 +13,11 @@ if (!rootElement) throw new Error("Root element not found");
 
 const root = ReactDOM.createRoot(rootElement);
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>
+  <RecoilRoot>
+    <React.StrictMode>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </React.StrictMode>
+  </RecoilRoot>
 );

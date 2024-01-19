@@ -1,9 +1,15 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { TokenAtom, isLoginSelector } from "recoil/TokenAtom";
 
 const LogIn = () => {
   const navigate = useNavigate();
+  // const setLogin = useSetRecoilState(loginAtom);
+  const setAcccessToken = useSetRecoilState(TokenAtom);
+  const accessToken = useRecoilValue(TokenAtom);
+
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
@@ -21,27 +27,32 @@ const LogIn = () => {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await axios
-      .post(
+    try {
+      const result = await axios.post(
         "http://localhost:3001/api/auth/sign-in",
         {
           email,
           password,
         },
-        {
-          withCredentials: true,
-        }
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        alert(err.response.data.message);
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-      });
+        { withCredentials: true }
+      );
+      setAcccessToken(result.data.data.accessToken);
+      localStorage.setItem("accessToken", result.data.data.accessToken);
+      navigate("/home");
+      // localStorage.setItem("refreshToken", result.data.data.refreshToken);
+    } catch (error) {
+      console.log(error);
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    }
   };
+
+  useEffect(() => {
+    if (accessToken !== "") {
+      navigate("/home");
+    }
+  }, [accessToken, navigate]);
 
   return (
     <div className="page-container">
