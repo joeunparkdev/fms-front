@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-
+import "../Layout/layout.css";
 const Home = () => {
   return (
     <div className="page-container">
