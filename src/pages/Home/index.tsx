@@ -1,45 +1,99 @@
 import React from "react";
 import axios from "axios";
-import "../Layout/layout.css";
-import { useRecoilValue } from "recoil";
-import { TokenAtom } from "recoil/TokenAtom";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+
+const PageContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+  gap: 0.5rem;
+`;
+
+const Menu = styled.nav`
+  width: 10%;
+  height: 90%;
+  background-color: white;
+  padding: 2rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const MenuItem = styled.p`
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  cursor: pointer;
+`;
+
+const Card = styled.div`
+  width: 80%;
+  height: 90%;
+  background-color: white;
+  padding: 2rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const StyledLink = styled.a`
+  color: #445664;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
+  }
+`;
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    navigate("/login");
+  };
+
   return (
-    <div className="page-container">
-      <div className="menu">
-        <p>
-          <a href="/home">HOME</a>
-        </p>
-        <p>
-          <a href="/team">TEAM</a>
-        </p>
-        <p>
-          <a href="/player">PLAYER</a>
-        </p>
-        <p>
-          <a href="/strategy">STRATEGY</a>
-        </p>
-        <p>
-          <a href="/match">MATCH</a>
-        </p>
-      </div>
-      <div className="card">
+    <PageContainer>
+      <Menu>
+        <MenuItem>
+          <StyledLink href="/home">HOME</StyledLink>
+        </MenuItem>
+        <MenuItem>
+          <StyledLink href="/team">TEAM</StyledLink>
+        </MenuItem>
+        <MenuItem>
+          <StyledLink href="/player">PLAYER</StyledLink>
+        </MenuItem>
+        <MenuItem>
+          <StyledLink href="/strategy">STRATEGY</StyledLink>
+        </MenuItem>
+        <MenuItem
+          onClick={handleLogout}
+          style={{
+            color: "#445664",
+          }}
+        >
+          LOGOUT
+        </MenuItem>
+      </Menu>
+      <Card>
         <h2>
-          <a href="/home">Football Management System (FMS) ⚽🔥</a>
+          <StyledLink href="/home">
+            Football Management System (FMS) ⚽🔥
+          </StyledLink>
         </h2>
-        <div className="profile-logo">
-          <div className="notification-bell">
-            <img src="src/img/bell.png" alt="알림 로고" />
-            <div id="notificationCounter" className="notification-counter">
-              0
-            </div>
-          </div>
-          <img src="src/img/profile.png" alt="프로필 로고" />
-        </div>
-        <slot />
-      </div>
-    </div>
+        {/* <slot /> */}
+      </Card>
+    </PageContainer>
   );
 };
 
