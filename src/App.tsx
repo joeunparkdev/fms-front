@@ -5,6 +5,8 @@ import Home from "pages/Home";
 import Team from "pages/Team";
 import Player from "pages/Player";
 import Strategy from "pages/Strategy";
+import AdminMembers from "pages/AdminMembers";
+import AdminTeams from "pages/AdminTeams";
 
 const App = () => {
   return (
@@ -17,6 +19,9 @@ const App = () => {
       <Route path="/login" element={<LogIn />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="*" element={<Navigate replace to="/login" />} />
+      {/* 어드민 용 페이지 */}
+      <Route path="/admin/members" element={<AdminMembers />} />
+      <Route path="/admin/teams" element={<AdminTeams />} />
     </Routes>
   );
 };
