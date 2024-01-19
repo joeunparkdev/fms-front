@@ -3,41 +3,46 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
 import Home from "pages/Home";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { TokenAtom, isLoginSelector } from "recoil/TokenAtom";
-import ProtectedRoute from "routes/ProtectedRoute";
+import { useSetRecoilState } from "recoil";
+import { TokenAtom } from "recoil/TokenAtom";
 
 const App = () => {
-  const setAcccessToken = useSetRecoilState(TokenAtom);
+  const setAccessToken = useSetRecoilState(TokenAtom);
 
   useEffect(() => {
     // localStorage에서 토큰을 가져와 상태를 설정
     const token = localStorage.getItem("accessToken");
     if (token) {
-      setAcccessToken(token);
+      setAccessToken(token);
     }
-  }, [setAcccessToken]);
+  }, [setAccessToken]);
 
-  const isLoggedIn = useRecoilValue(isLoginSelector);
+  // 로그인 상태 확인 로직
+  const isLoggedIn = localStorage.getItem("accessToken") !== null;
+
+  console.log(isLoggedIn);
+
   return (
     <Routes>
-      {/* {isLoggedIn ? (
-        <>
- 
-        </>
-      ) : (
-        <>
-          <Route path="/" element={<Navigate replace to="/login" />} />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/signup" element={<SignUp />} />
-        </>
-      )} */}
-      <Route element={<ProtectedRoute />}>
+      {isLoggedIn ? (
+        // 로그인한 사용자를 위한 라우트
         <Route path="/home" element={<Home />} />
-      </Route>
-      <Route path="/" element={<Navigate replace to="/login" />} />
-      <Route path="/login" element={<LogIn />} />
-      <Route path="/signup" element={<SignUp />} />
+      ) : (
+        // 비로그인 사용자를 위한 라우트
+        <Route path="/" element={<Navigate replace to="/login" />} />
+      )}
+      <Route
+        path="/login"
+        element={isLoggedIn ? <Navigate replace to="/home" /> : <LogIn />}
+      />
+      <Route
+        path="/signup"
+        element={isLoggedIn ? <Navigate replace to="/home" /> : <SignUp />}
+      />
+      <Route
+        path="*"
+        element={<Navigate replace to={isLoggedIn ? "/home" : "/login"} />}
+      />
     </Routes>
   );
 };

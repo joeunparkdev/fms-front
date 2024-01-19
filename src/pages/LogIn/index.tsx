@@ -1,21 +1,26 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { TokenAtom, isLoginSelector } from "recoil/TokenAtom";
+import { useSetRecoilState } from "recoil";
+import { TokenAtom } from "recoil/TokenAtom";
 
 const LogIn = () => {
   const navigate = useNavigate();
-  // const setLogin = useSetRecoilState(loginAtom);
-  const setAcccessToken = useSetRecoilState(TokenAtom);
-  const accessToken = useRecoilValue(TokenAtom);
-
+  const setAccessToken = useSetRecoilState(TokenAtom);
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
   });
 
   const { email, password } = inputs;
+
+  // 로그인 후 리디렉션을 처리하기 위한 효과
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      navigate("/home");
+    }
+  }, [navigate]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
@@ -27,32 +32,31 @@ const LogIn = () => {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const result = await axios.post(
+    await axios
+      .post(
         "http://localhost:3001/api/auth/sign-in",
         {
           email,
           password,
         },
-        { withCredentials: true }
-      );
-      setAcccessToken(result.data.data.accessToken);
-      localStorage.setItem("accessToken", result.data.data.accessToken);
-      navigate("/home");
-      // localStorage.setItem("refreshToken", result.data.data.refreshToken);
-    } catch (error) {
-      console.log(error);
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-    }
+        {
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        console.log(res);
+        localStorage.setItem("accessToken", res.data.data.accessToken);
+        localStorage.setItem("refreshToken", res.data.data.refreshToken);
+        setAccessToken(res.data.data.accessToken);
+        navigate("/home");
+      })
+      .catch((err) => {
+        alert(err.response?.data.message || "로그인 실패");
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      });
   };
-
-  useEffect(() => {
-    if (accessToken !== "") {
-      navigate("/home");
-    }
-  }, [accessToken, navigate]);
 
   return (
     <div className="page-container">
