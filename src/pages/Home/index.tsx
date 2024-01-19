@@ -1,5 +1,7 @@
 import React from "react";
 import axios from "axios";
+import { useRecoilValue } from "recoil";
+import { TokenAtom } from "recoil/TokenAtom";
 
 const Home = () => {
   return (
@@ -16,6 +18,9 @@ const Home = () => {
         </p>
         <p>
           <a href="/strategy">STRATEGY</a>
+        </p>
+        <p>
+          <a href="/match">MATCH</a>
         </p>
       </div>
       <div className="card">
