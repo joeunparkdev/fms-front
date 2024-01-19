@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import "../Layout/layout.css";
 import { useRecoilValue } from "recoil";
 import { TokenAtom } from "recoil/TokenAtom";
 
