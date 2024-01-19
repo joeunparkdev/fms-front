@@ -1,6 +1,9 @@
 import React from "react";
 import axios from "axios";
 import "../Layout/layout.css";
+import { useRecoilValue } from "recoil";
+import { TokenAtom } from "recoil/TokenAtom";
+
 const Home = () => {
   return (
     <div className="page-container">
@@ -16,6 +19,9 @@ const Home = () => {
         </p>
         <p>
           <a href="/strategy">STRATEGY</a>
+        </p>
+        <p>
+          <a href="/match">MATCH</a>
         </p>
       </div>
       <div className="card">
