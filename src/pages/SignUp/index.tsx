@@ -1,8 +1,61 @@
 import React, { useState } from "react";
-import axios from "axios";
-import useSWR from "swr";
+import axios, { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
-import "./signup.css"
+import styled from "styled-components";
+
+// Styled components
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+  text-align: center;
+`;
+
+const FormContainer = styled.div`
+  width: 30%;
+  border: 2px solid #blue;
+  padding: 2rem;
+  border-radius: 10px;
+  background-color: white;
+`;
+
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+const StyledInput = styled.input`
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
+const StyledButton = styled.button`
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  background-color: #000;
+  color: #fff;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #555;
+  }
+`;
+
+const Title = styled.h3`
+  text-align: center;
+  margin-bottom: 20px;
+`;
+
+const Label = styled.label`
+  display: block;
+`;
+
+// SignUp component
 const SignUp = () => {
   const navigate = useNavigate();
   const [inputs, setInputs] = useState({
@@ -23,64 +76,80 @@ const SignUp = () => {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await axios
-      .post("http://localhost:3001/api/auth/sign-up", {
-        email,
-        name,
-        password,
-        passwordConfirm,
-      })
-      .then((res) => {
-        if (res.data.statusCode === 201) {
-          alert("회원가입이 완료되었습니다.");
-          navigate("/login");
-        }
-      })
-      .catch((err) => {
-        alert(err.response.data.message);
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
+    if (password !== passwordConfirm) {
+      alert("비밀번호가 일치하지 않습니다.");
+      setInputs({
+        ...inputs,
+        password: "",
+        passwordConfirm: "",
       });
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/api/auth/sign-up",
+        {
+          email,
+          name,
+          password,
+          passwordConfirm,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response);
+      console.log(response.data);
+      navigate("/login");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data.message || "An error occurred");
+      } else if (error instanceof Error) {
+        // Handle generic error instances
+        alert(error.message);
+      } else {
+        // Handle cases where the caught error is not an Error instance
+        alert("An error occurred");
+      }
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    }
   };
 
   return (
-    <div>
-      <div className="login-form">
-        <h3>회원가입</h3>
-        <form onSubmit={onSubmit}>
-          <label id="email-label">
+    <Container>
+      <FormContainer>
+        <Title>회원가입</Title>
+        <StyledForm onSubmit={onSubmit}>
+          <Label>
             <span>이메일</span>
             <div>
-              <input
+              <StyledInput
                 type="email"
-                id="email"
                 name="email"
                 placeholder="이메일"
                 value={email}
                 onChange={onChange}
               />
             </div>
-          </label>
-
-          <label id="name-label">
+          </Label>
+          <Label>
             <span>이름</span>
             <div>
-              <input
+              <StyledInput
                 type="text"
-                id="name"
                 name="name"
                 placeholder="이름"
                 value={name}
                 onChange={onChange}
               />
             </div>
-          </label>
-
-          <label id="password-label">
+          </Label>
+          <Label>
             <span>비밀번호</span>
             <div>
-              <input
+              <StyledInput
                 type="password"
                 name="password"
                 placeholder="비밀번호"
@@ -88,12 +157,11 @@ const SignUp = () => {
                 onChange={onChange}
               />
             </div>
-          </label>
-
-          <label id="password-confrim-label">
+          </Label>
+          <Label>
             <span>비밀번호 확인</span>
             <div>
-              <input
+              <StyledInput
                 type="password"
                 name="passwordConfirm"
                 placeholder="비밀번호 확인"
@@ -101,12 +169,11 @@ const SignUp = () => {
                 onChange={onChange}
               />
             </div>
-          </label>
-          <button type="submit">가입완료</button>
-        </form>
-      </div>
-    </div>
+          </Label>
+          <StyledButton type="submit">가입완료</StyledButton>
+        </StyledForm>
+      </FormContainer>
+    </Container>
   );
 };
-
 export default SignUp;
