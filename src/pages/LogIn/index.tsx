@@ -47,6 +47,7 @@ const LogIn = () => {
         }
       )
       .then((res) => {
+        // mutate("http://localhost:3001/api/users/me"); 수정본
         mutate(res.data, false);
         localStorage.setItem("accessToken", res.data.data.accessToken);
         localStorage.setItem("refreshToken", res.data.data.refreshToken);
@@ -60,13 +61,14 @@ const LogIn = () => {
       });
   };
 
-  // if (data === undefined) {
-  //   return <div>로딩중...</div>;
-  // }
-
   if (data) {
     navigate("/home");
   }
+  // useEffect(() => {
+  //   if (data) {
+  //     navigate("/home");
+  //   }
+  // }, [data, navigate]);
 
   return (
     <div className="page-container">
