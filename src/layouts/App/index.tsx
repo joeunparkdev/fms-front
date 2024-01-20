@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import useSWR from "swr";
 import fetcher from "utils/fetcher";
+import { useTeamStore } from "store/teamStore";
 
 const PageContainer = styled.div`
   display: flex;
@@ -94,7 +95,11 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
+  const { setTeamId } = useTeamStore();
   const teamId = data?.teamId;
+  if (teamId) {
+    setTeamId(teamId);
+  }
 
   const navigate = useNavigate();
   // 유저 정보를 저장하고 있어야함
@@ -137,19 +142,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             Football Management System (FMS) ⚽🔥
           </StyledLink>
         </h2>
-        {/* {teamId ? (
-          <div>Your content here</div>
-        ) : (
-          <ErrorContainer>
-            <ErrorMessage>
-              속한 팀이 없습니다.
-              <br />
-              팀을 생성하거나 팀에 참가하세요.
-            </ErrorMessage>
-            <Button onClick={() => navigate("/team/create")}>팀 생성</Button>
-            <Button onClick={() => navigate("/team/join")}>팀 참가하기</Button>
-          </ErrorContainer>
-        )} */}
         {children}
       </Card>
     </PageContainer>
