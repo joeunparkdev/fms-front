@@ -1,15 +1,17 @@
+import "../Layout/layout.css";
+import "../SignUp/signup.css";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { TokenAtom } from "recoil/TokenAtom";
 import useSWR, { mutate } from "swr";
 import fetcher from "utils/fetcher";
 
 const LogIn = () => {
   const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
+
   const navigate = useNavigate();
-  const setAccessToken = useSetRecoilState(TokenAtom);
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
@@ -47,11 +49,13 @@ const LogIn = () => {
         }
       )
       .then((res) => {
-        // mutate("http://localhost:3001/api/users/me"); 수정본
         mutate(res.data, false);
-        localStorage.setItem("accessToken", res.data.data.accessToken);
-        localStorage.setItem("refreshToken", res.data.data.refreshToken);
-        navigate("/home");
+        if (res.data.statusCode === 200) {
+          localStorage.setItem("accessToken", res.data.data.accessToken);
+          localStorage.setItem("refreshToken", res.data.data.refreshToken);
+          // setAccessToken(res.data.data.accessToken);
+          navigate("/home");
+        }
       })
       .catch((err) => {
         alert(err.response?.data.message || "로그인 실패");
@@ -62,13 +66,8 @@ const LogIn = () => {
   };
 
   if (data) {
-    navigate("/home");
+    navigate("/home", { replace: true });
   }
-  // useEffect(() => {
-  //   if (data) {
-  //     navigate("/home");
-  //   }
-  // }, [data, navigate]);
 
   return (
     <div className="page-container">

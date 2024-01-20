@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
@@ -104,6 +104,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     navigate("/login");
   };
 
+  if (!data) {
+    navigate("/login", { replace: true });
+  }
   return (
     <PageContainer>
       <Menu>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const fetcher = (url: string) => {
+export default (url: string) => {
   // localStorage에서 accessToken을 가져옵니다.
   const accessToken = localStorage.getItem("accessToken");
 
@@ -14,5 +14,3 @@ const fetcher = (url: string) => {
     })
     .then((res) => res.data);
 };
-
-export default fetcher;
