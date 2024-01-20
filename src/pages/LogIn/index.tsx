@@ -1,8 +1,16 @@
+import "../Layout/layout.css";
+import "../SignUp/signup.css";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { TokenAtom } from "recoil/TokenAtom";
+import useSWR, { mutate } from "swr";
+import fetcher from "utils/fetcher";
 
 const LogIn = () => {
+  const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
+
   const navigate = useNavigate();
   const [inputs, setInputs] = useState({
     email: "",
@@ -10,6 +18,14 @@ const LogIn = () => {
   });
 
   const { email, password } = inputs;
+
+  // 로그인 후 리디렉션을 처리하기 위한 효과
+  // useEffect(() => {
+  //   const token = localStorage.getItem("accessToken");
+  //   if (token) {
+  //     navigate("/home");
+  //   }
+  // }, [navigate]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
@@ -61,7 +77,27 @@ const LogIn = () => {
     //   });
       window.location.href = kakaoURL;
 
+      )
+      .then((res) => {
+        mutate(res.data, false);
+        if (res.data.statusCode === 200) {
+          localStorage.setItem("accessToken", res.data.data.accessToken);
+          localStorage.setItem("refreshToken", res.data.data.refreshToken);
+          // setAccessToken(res.data.data.accessToken);
+          navigate("/home");
+        }
+      })
+      .catch((err) => {
+        alert(err.response?.data.message || "로그인 실패");
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      });
   };
+
+  if (data) {
+    navigate("/home", { replace: true });
+  }
 
   return (
     <div className="page-container">
