@@ -1,4 +1,3 @@
-import "../Layout/layout.css";
 import "../SignUp/signup.css";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -60,7 +59,7 @@ const LogIn = () => {
   // const CLIENT_ID = `${process.env.KAKAO_API_KEY}`;
   // const REDIRECT_URI = `${process.env.KAKAO_CALLBACK_URL}`;
   const CLIENT_ID = "87e81e12dd9ec54f482031c186a83318";
-  const REDIRECT_URI =  "http://localhost:3000/api/auth/kakao/callback";
+  const REDIRECT_URI = "http://localhost:3000/api/auth/kakao/callback";
   const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
   const onKakaoLoginClick = () => {
@@ -75,35 +74,38 @@ const LogIn = () => {
     //   .catch((error) => {
     //     console.error("Error during Kakao login:", error);
     //   });
-      window.location.href = kakaoURL;
-
-      )
-      .then((res) => {
-        mutate(res.data, false);
-        if (res.data.statusCode === 200) {
-          localStorage.setItem("accessToken", res.data.data.accessToken);
-          localStorage.setItem("refreshToken", res.data.data.refreshToken);
-          // setAccessToken(res.data.data.accessToken);
-          navigate("/home");
-        }
-      })
-      .catch((err) => {
-        alert(err.response?.data.message || "로그인 실패");
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-      });
+    window.location.href = kakaoURL;
   };
-
-  if (data) {
-    navigate("/home", { replace: true });
-  }
 
   return (
     <div className="page-container">
       <div className="login-form">
         <form onSubmit={onSubmit}>
-          {/* Your form input fields */}
+          <label id="email-label">
+            <span>이메일</span>
+            <div>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="이메일"
+                value={email}
+                onChange={onChange}
+              />
+            </div>
+          </label>
+          <label id="password-label">
+            <span>비밀번호</span>
+            <div>
+              <input
+                type="password"
+                name="password"
+                placeholder="비밀번호"
+                value={password}
+                onChange={onChange}
+              />
+            </div>
+          </label>
           <button className="contrast outline" type="submit">
             로그인
           </button>
