@@ -10,6 +10,7 @@ import Player from "pages/Player";
 import Strategy from "pages/Strategy";
 import AdminTeams from "pages/AdminTeams";
 import AdminUsers from "pages/AdminUsers";
+import Match from "pages/match";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
       <Route path="/calendar" element={<Calendar />} />
       <Route path="/kakaoLogin" element={<KakaoLogin />} />
       {/* <Route path="/api/auth/kakao/callback" element={<KakaoCallback />} /> */}
+      <Route path="/match" element={<Match />} />
       {/* 어드민 용 페이지 */}
       <Route path="/admin/users" element={<AdminUsers />} />
       <Route path="/admin/teams" element={<AdminTeams />} />
