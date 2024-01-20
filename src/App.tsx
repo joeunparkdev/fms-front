@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
 import Home from "pages/Home";
+import KakaoLogin from "pages/KakaoLogin/index";
 
 const App = () => {
   return (
@@ -11,7 +12,8 @@ const App = () => {
       <Route path="/login" element={<LogIn />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/home" element={<Home />} />
-    </Routes>
+      <Route path="/kakaoLogin" element={<KakaoLogin />} />
+</Routes>
   );
 };
 
