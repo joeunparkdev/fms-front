@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
@@ -103,6 +103,18 @@ const AdminLayout: React.FC<LayoutProps> = ({ children }) => {
     localStorage.removeItem("accessToken");
     navigate("/login");
   };
+
+  // 아래 코드는 로그인이 되어있는지 확인하는 코드. 로그인이 되어있지 않으면 로그인 페이지로 이동
+  // useEffect(() => {
+  //   if (data) {
+  //     navigate("/admin/users");
+  //   } else {
+  //     navigate("/login");
+  //   }
+  // }, [data, navigate]);
+  if (!data) {
+    navigate("/login");
+  }
 
   return (
     <PageContainer>
