@@ -1,59 +1,17 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
-// Styled components
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #f5f5f5;
-  text-align: center;
-`;
-
-const FormContainer = styled.div`
-  width: 30%;
-  border: 2px solid #blue;
-  padding: 2rem;
-  border-radius: 10px;
-  background-color: white;
-`;
-
-const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
-
-const StyledInput = styled.input`
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-`;
-
-const StyledButton = styled.button`
-  padding: 10px 20px;
-  border: none;
-  border-radius: 20px;
-  background-color: #000;
-  color: #fff;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #555;
-  }
-`;
-
-const Title = styled.h3`
-  text-align: center;
-  margin-bottom: 20px;
-`;
-
-const Label = styled.label`
-  display: block;
-`;
+import {
+  Container,
+  FormContainer,
+  Label,
+  LinkContainer,
+  StyledButton,
+  StyledForm,
+  StyledInput,
+  Title,
+} from "./styles";
 
 // SignUp component
 const SignUp = () => {
@@ -172,6 +130,10 @@ const SignUp = () => {
           </Label>
           <StyledButton type="submit">가입완료</StyledButton>
         </StyledForm>
+        <LinkContainer>
+          이미 회원이신가요?&nbsp;
+          <Link to="/login">로그인 하러가기</Link>
+        </LinkContainer>
       </FormContainer>
     </Container>
   );

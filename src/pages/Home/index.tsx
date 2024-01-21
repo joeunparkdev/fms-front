@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import useSWR from "swr";
 import fetcher from "utils/fetcher";
 import Layout from "layouts/App";
+import { useTokenStore } from "store/tokenStore";
+import { useTeamStore } from "store/teamStore";
 
 const ErrorContainer = styled.div`
   display: flex;
@@ -40,16 +42,10 @@ const Button = styled.button`
 `;
 
 const Home = () => {
-  const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
-  const teamId = data?.teamId;
+  const { teamId } = useTeamStore();
+  const { accessToken } = useTokenStore();
 
   const navigate = useNavigate();
-  // 유저 정보를 저장하고 있어야함
-
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    navigate("/login");
-  };
 
   return (
     <Layout>
