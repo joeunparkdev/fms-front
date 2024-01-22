@@ -10,7 +10,7 @@ const KakaoCallback = () => {
     const code = params.get("code");
     const grantType = "authorization_code";
     const REST_API_KEY = "87e81e12dd9ec54f482031c186a83318";
-    const REDIRECT_URI = "http://localhost:3000/api/auth/kakao/callback";
+    const REDIRECT_URI = "http://localhost:3001/api/auth/kakao/callback";
 
     axios
       .post(
@@ -24,6 +24,8 @@ const KakaoCallback = () => {
       )
       .then((res) => {
         const { access_token } = res.data;
+        console.log("res is");
+        console.log(res);
         axios
           .get("https://kapi.kakao.com/v2/user/me", {
             headers: {

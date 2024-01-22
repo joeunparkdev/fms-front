@@ -4,8 +4,8 @@ import axios from "axios";
 const KakaoLogin = () => {
   const onKakaoLoginClick = async () => {
     try {
-      const CLIENT_ID = `${process.env.KAKAO_API_KEY}`;
-      const REDIRECT_URI = `${process.env.KAKAO_CALLBACK_URL}`;
+      const CLIENT_ID = `${process.env.REACT_APP_KAKAO_API_KEY}`;
+      const REDIRECT_URI = `${process.env.REACT_APP_KAKAO_CALLBACK_URL}`;
       const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
       window.location.href = kakaoURL;

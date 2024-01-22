@@ -13,6 +13,8 @@ import AdminUsers from "pages/AdminUsers";
 //import Formation from "pages/Formation";
 import TeamTable from "pages/TeamTable";
 import MemberTable from "pages/memberTable";
+import Match from "pages/match";
+import Profile from "pages/Profile";
 
 const App = () => {
   return (
@@ -31,6 +33,9 @@ const App = () => {
       <Route path="/teamTable" element={<TeamTable />} />
       <Route path="/memberTable" element={<MemberTable />} />
       <Route path="/api/auth/kakao/callback" element={<KakaoCallback />} />
+      <Route path="/profile/:userId/edit" element={<Profile />} />
+      {/* <Route path="/api/auth/kakao/callback" element={<KakaoCallback />} /> */}
+      <Route path="/match" element={<Match />} />
       {/* 어드민 용 페이지 */}
       <Route path="/admin/users" element={<AdminUsers />} />
       <Route path="/admin/teams" element={<AdminTeams />} />

@@ -2,8 +2,12 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import fetcher from "utils/fetcher";
+import { useTeamStore } from "store/teamStore";
+import { useUserStore } from "store/userStore";
+import { useTokenStore } from "store/tokenStore";
+import { BsEmojiSunglasses } from "react-icons/bs";
 
 const PageContainer = styled.div`
   display: flex;
@@ -92,21 +96,47 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
+/**
+ * To Do
+ * 1. 유저 정보 저장하기
+ * 2. 프로필 페이지 만들기
+ * 3. 프로필 페이지에서 서버로 데이터 전송
+ */
+
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
-  const teamId = data?.teamId;
-
+  const { setTeamId } = useTeamStore();
+  const { setUser, id } = useUserStore();
+  let userId = id;
   const navigate = useNavigate();
-  // 유저 정보를 저장하고 있어야함
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     navigate("/login");
   };
 
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    axios
+      .get("http://localhost:3001/api/users/me", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        withCredentials: true,
+      })
+      .then((res) => setUser(res.data.data))
+      .catch((err) => {
+        console.log(err);
+        alert(err.response?.data?.message);
+      });
+  }, [setUser]);
+
+  console.log(data);
+
   if (!data) {
-    navigate("/login", { replace: true });
+    navigate("/login");
   }
+
   return (
     <PageContainer>
       <Menu>
@@ -136,20 +166,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <StyledLink href="/home">
             Football Management System (FMS) ⚽🔥
           </StyledLink>
+
+          <StyledLink href={`/profile/${userId}/edit`}>프로필</StyledLink>
         </h2>
-        {/* {teamId ? (
-          <div>Your content here</div>
-        ) : (
-          <ErrorContainer>
-            <ErrorMessage>
-              속한 팀이 없습니다.
-              <br />
-              팀을 생성하거나 팀에 참가하세요.
-            </ErrorMessage>
-            <Button onClick={() => navigate("/team/create")}>팀 생성</Button>
-            <Button onClick={() => navigate("/team/join")}>팀 참가하기</Button>
-          </ErrorContainer>
-        )} */}
+        {/* <StyledLink href={id ? `profile/${id}/edit` : "/home"}>
+          <BsEmojiSunglasses />
+        </StyledLink> */}
+
         {children}
       </Card>
     </PageContainer>
