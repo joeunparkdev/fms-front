@@ -11,32 +11,20 @@ import {
 } from "pages/SignUp/styles";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useLoggedInStatusStore } from "store/loggedInStatusStore";
+import { useTokenStore } from "store/tokenStore";
 import useSWR, { mutate } from "swr";
 import fetcher from "utils/fetcher";
 
 const LogIn = () => {
-  const { data, error } = useSWR(
-    `http://localhost:${
-      process.env.REACT_APP_SERVER_PORT || 3000
-    }/api/users/me`,
-    fetcher
-  );
-
+  const { accessToken } = useTokenStore();
+  const { isLoggedIn, setIsLoggedIn } = useLoggedInStatusStore();
   const navigate = useNavigate();
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
   });
-
   const { email, password } = inputs;
-
-  // 로그인 후 리디렉션을 처리하기 위한 효과
-  // useEffect(() => {
-  //   const token = localStorage.getItem("accessToken");
-  //   if (token) {
-  //     navigate("/home");
-  //   }
-  // }, [navigate]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
@@ -46,9 +34,16 @@ const LogIn = () => {
     });
   };
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/home", { replace: true });
+    }
+  }, [isLoggedIn]);
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      console.log("clicked");
       const res = await axios.post(
         `http://localhost:${
           process.env.REACT_APP_SERVER_PORT || 3000
@@ -63,15 +58,12 @@ const LogIn = () => {
       );
       localStorage.setItem("accessToken", res.data.data.accessToken);
       localStorage.setItem("refreshToken", res.data.data.refreshToken);
-      mutate(
-        `http://localhost:${
-          process.env.REACT_APP_SERVER_PORT || 3000
-        }/api/users/me`
-      );
+      setIsLoggedIn(true);
+      navigate("/home", { replace: true });
     } catch (err: any) {
       console.log(err);
       alert(err.response?.data?.message);
-      // setTimeout(() => {
+      // setTimeout(() => {zss
       //   window.location.reload();
       // }, 2000);
     }
@@ -98,10 +90,13 @@ const LogIn = () => {
     window.location.href = kakaoURL;
   };
 
-  if (data) {
+  // if (data) {
+  //   navigate("/home", { replace: true });
+  // }
+  // alert(isLoggedIn);
+  if (isLoggedIn) {
     navigate("/home", { replace: true });
   }
-
   return (
     <Container>
       {/* <div className="page-container"> */}
