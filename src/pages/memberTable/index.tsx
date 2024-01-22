@@ -6,7 +6,7 @@ import "./member.css"
 interface Member {
   id: number;
   name: string;
-  team_name: string;
+  team_name?: string;
   user?: {
     profile?: {
       preferred_position?: string;
@@ -24,13 +24,17 @@ const MemberTable = () => {
   useEffect(() => {
     async function fetchMembers() {
       try {
-        const response = await axios.get('http://localhost:3000/api/member');
-        const membersWithProfile = response.data.map((member: Member) => {
+        const response = await axios.get(`http://localhost:${
+          process.env.REACT_APP_SERVER_PORT || 3000
+        }/api/members`);
+        const membersWithProfile = response.data ? response.data.map((member: Member) => {
           return {
             ...member,
             profile: member?.user?.profile,
           };
-        });
+        }) : [];
+        console.log(response);
+        console.log(membersWithProfile);
         setMembers(membersWithProfile);
       } catch (error) {
         console.error('멤버 정보를 불러오는 데 실패했습니다.', error);

@@ -104,7 +104,7 @@ interface LayoutProps {
  */
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
+  const { data, error } = useSWR("http://localhost:3000/api/users/me", fetcher);
   const { setTeamId } = useTeamStore();
   const { setUser, id } = useUserStore();
   let userId = id;
@@ -115,21 +115,23 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     navigate("/login");
   };
 
-  useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    axios
-      .get("http://localhost:3001/api/users/me", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        withCredentials: true,
-      })
-      .then((res) => setUser(res.data.data))
-      .catch((err) => {
-        console.log(err);
-        alert(err.response?.data?.message);
-      });
-  }, [setUser]);
+  // useEffect(() => {
+  //   const accessToken = localStorage.getItem("accessToken");
+  //   axios
+  //     .get(`http://localhost:${
+  //       process.env.REACT_APP_SERVER_PORT || 3000
+  //     }/api/users/me`, {
+  //       headers: {
+  //         Authorization: `Bearer ${accessToken}`,
+  //       },
+  //       withCredentials: true,
+  //     })
+  //     .then((res) => setUser(res.data.data))
+  //     .catch((err) => {
+  //       console.log(err);
+  //       alert(err.response?.data?.message);
+  //     });
+  // }, [setUser]);
 
   console.log(data);
 

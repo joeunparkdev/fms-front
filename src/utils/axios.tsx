@@ -1,7 +1,11 @@
 import axios from "axios";
 
-export const BASE_URL = "http://localhost:3001";
+export const BASE_URL = `http://localhost:${
+  process.env.REACT_APP_SERVER_PORT || 3000
+}`;
 
+
+  
 // 기본 인스턴스
 export const basicAxios = axios.create({
   baseURL: BASE_URL,

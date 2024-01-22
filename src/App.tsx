@@ -3,7 +3,6 @@ import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
 import Home from "pages/Home";
 import KakaoLogin from "pages/KakaoLogin/index";
-import KakaoCallback from "pages/KakaoCallBack/KakaoCallBack";
 import Calendar from "pages/Calendar/index";
 import Team from "pages/Team";
 import Player from "pages/Player";
@@ -15,6 +14,8 @@ import TeamTable from "pages/TeamTable";
 import MemberTable from "pages/memberTable";
 import Match from "pages/match";
 import Profile from "pages/Profile";
+import KakaoSuccess from "pages/KakaoSuccess";
+import Layout from "layouts/App";
 
 const App = () => {
   return (
@@ -32,9 +33,8 @@ const App = () => {
       {/* <Route path="/formation " element={<Formation />} /> */}
       <Route path="/teamTable" element={<TeamTable />} />
       <Route path="/memberTable" element={<MemberTable />} />
-      <Route path="/api/auth/kakao/callback" element={<KakaoCallback />} />
+      <Route path="/kakaoSuccess" element={<KakaoSuccess />} />
       <Route path="/profile/:userId/edit" element={<Profile />} />
-      {/* <Route path="/api/auth/kakao/callback" element={<KakaoCallback />} /> */}
       <Route path="/match" element={<Match />} />
       {/* 어드민 용 페이지 */}
       <Route path="/admin/users" element={<AdminUsers />} />

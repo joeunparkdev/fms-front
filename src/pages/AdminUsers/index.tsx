@@ -56,7 +56,9 @@ const AdminUsers = () => {
       try {
         const accessToken = localStorage.getItem("accessToken");
         const { data } = await axios.get(
-          "http://localhost:3001/api/admin/users",
+          `http://localhost:${
+        process.env.REACT_APP_SERVER_PORT || 3000
+      }/api/admin/users`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -77,7 +79,9 @@ const AdminUsers = () => {
   }, []);
   const handleDelete = async (userId: number) => {
     await axios
-      .delete(`http://localhost:3001/api/admin/users/${userId}`, {
+      .delete(  `http://localhost:${
+        process.env.REACT_APP_SERVER_PORT || 3000
+      }/api/admin/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },

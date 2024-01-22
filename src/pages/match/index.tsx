@@ -88,7 +88,9 @@ const Match = () => {
     // 구단주 체크를 수행하는 함수
     const findAllSoccerField = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/api/match/field", {
+        const response = await axios.get( `http://localhost:${
+          process.env.REACT_APP_SERVER_PORT || 3000
+        }/api/match/field`, {
           headers: {
             Authorization: `Bearer ${accessToken}` // Bearer 토큰 추가
           }

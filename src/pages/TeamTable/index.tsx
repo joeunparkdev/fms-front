@@ -20,7 +20,9 @@ const TeamTable = () => {
   useEffect(() => {
     async function fetchTeams() {
       try {
-        const response = await axios.get('http://localhost:3000/api/team');
+        const response = await axios.get(`http://localhost:${
+          process.env.REACT_APP_SERVER_PORT || 3000
+        }/api/team`);
         setTeams(response.data);
       } catch (error) {
         console.error('팀 정보를 불러오는 데 실패했습니다.', error);
