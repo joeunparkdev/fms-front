@@ -94,9 +94,9 @@ const LogIn = () => {
   //   navigate("/home", { replace: true });
   // }
   // alert(isLoggedIn);
-  if (isLoggedIn) {
-    navigate("/home", { replace: true });
-  }
+  // if (isLoggedIn) {
+  //   navigate("/home", { replace: true });
+  // }
   return (
     <Container>
       {/* <div className="page-container"> */}
