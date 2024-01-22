@@ -3,7 +3,7 @@ import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
 import Home from "pages/Home";
 import KakaoLogin from "pages/KakaoLogin/index";
-//import KakaoCallback from "pages/KakaoCallBack/KakaoCallBack";
+import KakaoCallback from "pages/KakaoCallBack/KakaoCallBack";
 import Calendar from "pages/Calendar/index";
 import Team from "pages/Team";
 import Player from "pages/Player";
@@ -30,7 +30,7 @@ const App = () => {
       {/* <Route path="/formation " element={<Formation />} /> */}
       <Route path="/teamTable" element={<TeamTable />} />
       <Route path="/memberTable" element={<MemberTable />} />
-      {/* <Route path="/api/auth/kakao/callback" element={<KakaoCallback />} /> */}
+      <Route path="/api/auth/kakao/callback" element={<KakaoCallback />} />
       {/* 어드민 용 페이지 */}
       <Route path="/admin/users" element={<AdminUsers />} />
       <Route path="/admin/teams" element={<AdminTeams />} />
