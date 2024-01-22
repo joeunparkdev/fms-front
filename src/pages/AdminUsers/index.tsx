@@ -51,30 +51,30 @@ const AdminUsers = () => {
   const [selectedUsers, setSelectedUsers] = useState<SelectedUsers>({});
   const [error, setError] = useState<string>("");
 
-  useEffect(() => {
-    const getUsers = async () => {
-      try {
-        const accessToken = localStorage.getItem("accessToken");
-        const { data } = await axios.get(
-          "http://localhost:3001/api/admin/users",
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-            withCredentials: true,
-          }
-        );
-        setUsers(data.data);
-        setError(""); // 에러 상태를 초기화합니다.
-      } catch (err) {
-        // 에러 처리 로직
-        setError("사용자 정보를 불러오는데 실패했습니다.");
-        console.error(err);
-        // 추가적으로, err 객체에 따라 더 세부적인 에러 정보를 setError에 제공할 수 있습니다.
-      }
-    };
-    getUsers();
-  }, []);
+  // useEffect(() => {
+  //   const getUsers = async () => {
+  //     try {
+  //       const accessToken = localStorage.getItem("accessToken");
+  //       const { data } = await axios.get(
+  //         "http://localhost:3001/api/admin/users",
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${accessToken}`,
+  //           },
+  //           withCredentials: true,
+  //         }
+  //       );
+  //       setUsers(data.data);
+  //       setError(""); // 에러 상태를 초기화합니다.
+  //     } catch (err) {
+  //       // 에러 처리 로직
+  //       setError("사용자 정보를 불러오는데 실패했습니다.");
+  //       console.error(err);
+  //       // 추가적으로, err 객체에 따라 더 세부적인 에러 정보를 setError에 제공할 수 있습니다.
+  //     }
+  //   };
+  //   getUsers();
+  // }, []);
   const handleDelete = async (userId: number) => {
     await axios
       .delete(`http://localhost:3001/api/admin/users/${userId}`, {

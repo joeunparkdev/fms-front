@@ -8,6 +8,8 @@ import { useTeamStore } from "store/teamStore";
 import { useUserStore } from "store/userStore";
 import { useTokenStore } from "store/tokenStore";
 import { BsEmojiSunglasses } from "react-icons/bs";
+import { useProfileStore } from "store/profileStore";
+import { useLoggedInStatusStore } from "store/loggedInStatusStore";
 
 const PageContainer = styled.div`
   display: flex;
@@ -104,39 +106,38 @@ interface LayoutProps {
  */
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+  // const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
   const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
-  const { setTeamId } = useTeamStore();
-  const { setUser, id } = useUserStore();
-  let userId = id;
+  const { teamId } = useTeamStore();
+  const { id: userId, setUser } = useUserStore();
+  const { setProfile, id: profileId } = useProfileStore();
   const navigate = useNavigate();
 
+  const { isLoggedIn, setLogOut } = useLoggedInStatusStore();
+  // useEffect를 사용하여 data가 변경될 때만 setUser를 호출합니다.
+  useEffect(() => {
+    if (data) {
+      console.log(data.data.profile);
+      setUser(data.data);
+      setProfile(data.data.profile);
+    }
+  }, [data]); // 의존성 배열에 data를 넣어 data가 변경될 때만 이 코드가 실행되도록 합니다.
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]); // isLoggedIn 상태가 변경될 때만 이 코드가 실행되도록 합니다.
+
   const handleLogout = () => {
+    setLogOut();
     localStorage.removeItem("accessToken");
     navigate("/login");
   };
 
-  useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    axios
-      .get("http://localhost:3001/api/users/me", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        withCredentials: true,
-      })
-      .then((res) => setUser(res.data.data))
-      .catch((err) => {
-        console.log(err);
-        alert(err.response?.data?.message);
-      });
-  }, [setUser]);
-
-  console.log(data);
-
-  if (!data) {
+  if (!isLoggedIn) {
     navigate("/login");
   }
-
   return (
     <PageContainer>
       <Menu>
@@ -167,11 +168,23 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             Football Management System (FMS) ⚽🔥
           </StyledLink>
 
-          <StyledLink href={`/profile/${userId}/edit`}>프로필</StyledLink>
+          <StyledLink
+            href={
+              profileId
+                ? `/profile/${profileId}`
+                : `/profile/${userId}/register`
+            }
+          >
+            프로필
+          </StyledLink>
         </h2>
-        {/* <StyledLink href={id ? `profile/${id}/edit` : "/home"}>
+        <StyledLink
+          href={
+            profileId ? `/profile/${profileId}` : `/profile/${userId}/register`
+          }
+        >
           <BsEmojiSunglasses />
-        </StyledLink> */}
+        </StyledLink>
 
         {children}
       </Card>
@@ -180,3 +193,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 };
 
 export default Layout;
+function setProfile(profile: any) {
+  throw new Error("Function not implemented.");
+}
