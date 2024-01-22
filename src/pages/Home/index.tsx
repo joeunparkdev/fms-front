@@ -8,8 +8,7 @@ import Layout from "layouts/App";
 import { useTokenStore } from "store/tokenStore";
 import { useTeamStore } from "store/teamStore";
 import { useUserStore } from "store/userStore";
-import { useLoggedInStatusStore } from "store/loggedInStatusStore";
-
+import { useProfileStore } from "store/profileStore";
 const ErrorContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -53,16 +52,12 @@ const Home = () => {
   const { teamId } = useTeamStore();
   const { id: userId, setUser } = useUserStore();
   const { accessToken } = useTokenStore();
-  const { isLoggedIn } = useLoggedInStatusStore();
 
   // if (data) {
   //   setUser(data.data);
   // }
 
   const navigate = useNavigate();
-  if (!isLoggedIn) {
-    navigate("/login");
-  }
 
   return (
     <Layout>

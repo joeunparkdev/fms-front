@@ -9,7 +9,7 @@ import { useUserStore } from "store/userStore";
 import { useTokenStore } from "store/tokenStore";
 import { BsEmojiSunglasses } from "react-icons/bs";
 import { useProfileStore } from "store/profileStore";
-import { useLoggedInStatusStore } from "store/loggedInStatusStore";
+import useAuthStore from "store/useAuthStore";
 
 const PageContainer = styled.div`
   display: flex;
@@ -110,33 +110,24 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
   const { teamId } = useTeamStore();
   const { id: userId, setUser } = useUserStore();
-  // const profileStore = useProfileStore();
-
-  // const { setProfile, id: profileId } = useProfileStore();
+  const { logout } = useAuthStore();
+  const { setProfile, id: profileId } = useProfileStore();
   const navigate = useNavigate();
 
-  const { isLoggedIn, setLogOut } = useLoggedInStatusStore();
   // useEffect를 사용하여 data가 변경될 때만 setUser를 호출합니다.
   useEffect(() => {
     if (data) {
+      console.log(data?.data?.profile);
       setUser(data.data);
-      // profileStore.setProfile(data.data.profile);
     }
-  }, [
-    data,
-    setUser,
-    //  profileStore
-  ]);
-
-  useEffect(() => {
-    if (!isLoggedIn) {
-      navigate("/login", { replace: true });
+    if (data?.data.profile) {
+      setProfile(data.data.profile);
     }
-  }, [isLoggedIn, navigate]); // isLoggedIn 상태가 변경될 때만 이 코드가 실행되도록 합니다.
+  }, [data]);
 
   const handleLogout = () => {
-    setLogOut();
-    localStorage.removeItem("accessToken");
+    logout();
+    navigate("/login");
   };
 
   return (
@@ -168,26 +159,24 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <StyledLink to="/home">
             Football Management System (FMS) ⚽🔥
           </StyledLink>
-          {/* 
+
           <StyledLink
             to={
-              profileStore.id
-                ? `/profile/${profileStore.id}`
+              profileId
+                ? `/profile/${profileId}`
                 : `/profile/${userId}/register`
             }
           >
             프로필
-          </StyledLink> */}
+          </StyledLink>
         </h2>
-        {/* <StyledLink
+        <StyledLink
           to={
-            profileStore.id
-              ? `/profile/${profileStore.id}`
-              : `/profile/${userId}/register`
+            profileId ? `/profile/${profileId}` : `/profile/${userId}/register`
           }
         >
           <BsEmojiSunglasses />
-        </StyledLink> */}
+        </StyledLink>
 
         {children}
       </Card>
