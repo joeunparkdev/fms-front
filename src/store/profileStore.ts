@@ -1,7 +1,8 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface ProfileStore {
-  id: number | undefined;
+  id: string | undefined;
   gender: string;
   preferredPosition: string;
   height: number;
@@ -9,11 +10,18 @@ interface ProfileStore {
   setProfile: (profile: Omit<ProfileStore, "setProfile">) => void;
 }
 
-export const useProfileStore = create<ProfileStore>((set) => ({
-  id: undefined,
-  gender: "",
-  preferredPosition: "",
-  height: 0,
-  weight: 0,
-  setProfile: (profile) => set(profile),
-}));
+export const useProfileStore = create(
+  persist<ProfileStore>(
+    (set) => ({
+      id: "",
+      gender: "",
+      preferredPosition: "",
+      height: 0,
+      weight: 0,
+      setProfile: (profile) => set(profile),
+    }),
+    {
+      name: "profile-storage",
+    }
+  )
+);
