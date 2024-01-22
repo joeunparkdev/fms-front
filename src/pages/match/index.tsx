@@ -2,7 +2,6 @@ import Layout from "layouts/App";
 import styled from 'styled-components';
 import React, { useEffect,useState } from "react";
 import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -56,22 +55,37 @@ const CustomCard = styled(Card)`
   }
 `;
 
+const Button = styled.button`
+  padding: 8px 16px;
+  min-width: 64px;
+  border: none;
+  border-radius: 20px; /* 더 둥글게 조정 */
+  background-color: #f0f0f0; /* 밝은 회색으로 변경 */
+  color: #000;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600; /* 폰트 두께 조정 */
+  margin: 0 5px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2); /* 그림자 추가 */
+  transition: all 0.3s ease-in-out; /* 부드러운 전환 효과 추가 */
 
+  &:hover {
+    background-color: #e6e6e6; /* 호버 시 배경색 변경 */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* 호버 시 그림자 강조 */
+  }
+
+  &:active {
+    background-color: #dcdcdc; /* 클릭 시 배경색 변경 */
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15); /* 클릭 시 그림자 약화 */
+  }
+
+  &:focus {
+    outline: none; /* 포커스 시 윤곽선 제거 */
+    box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5); /* 포커스 시 그림자 추가 */
+  }
+`;
 
 const Match = () => {
-
-  /*
-  const [tokenInfo, setTokenInfo] = useState(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      const payload = token.split('.')[1]; // 토큰을 점('.') 기준으로 나누고 페이로드 부분을 선택
-      const decodedPayload = atob(payload); // Base64 디코딩
-      const payloadData = JSON.parse(decodedPayload); // JSON으로 파싱
-      setTokenInfo(payloadData); // 토큰 정보 저장
-    }
-  }, []);*/
 
   const [getField, setField] = useState<Field[]>([]);
   const [loading, setLoading] = useState(true);
@@ -81,11 +95,25 @@ const Match = () => {
     id: number;
     location_id: number;
     field_name: string;
+    image_url: string;
+    phone_number:string;
+    locationfield:object;
+  };
+
+  const navigateToBooking = (Field:any) => {
+    navigate("/match/book", 
+    { state: {  fieldId: Field.id, 
+                fieldName: Field.field_name, 
+                locationId: Field.location_id, 
+                imageUrl: Field.image_url,
+                phone:Field.phone_number,
+                address:Field.locationfield.address
+              } });
   };
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
-    // 구단주 체크를 수행하는 함수
+
     const findAllSoccerField = async () => {
       try {
         const response = await axios.get("http://localhost:3001/api/match/field", {
@@ -107,14 +135,6 @@ const Match = () => {
   }, []);
 
 
-  // 가상의 경기장 데이터 (테스트시 아래 getField.map 대신 stadiumList로 바꿔 사용)
-  const stadiumList = [
-    { id: 1, name: "스타디움 1", location: "서울" },
-    { id: 2, name: "스타디움 2", location: "부산" },
-    { id: 3, name: "스타디움 3", location: "대구" },
-    { id: 4, name: "스타디움 3", location: "대구" },
-    // 다른 경기장 정보도 추가할 수 있습니다.
-  ];
       
   return (
     <Layout>
@@ -122,7 +142,7 @@ const Match = () => {
       <StadiumsContainer>
         {getField.map((field) => (
           <CustomCard key={field.id} style={{ width: '18rem', height:'400px',marginBottom: '20px' }}>
-            <Card.Img variant="top" src="https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/idi/image/ROazs2HATMpunuQWulcjVc9d0Nk.JPG"
+            <Card.Img variant="top" src={field.image_url}
                 style={{ 
                   width: '100%',  // 이미지의 너비를 카드 너비에 맞춤
                   height: '200px', // 이미지의 높이를 지정
@@ -134,7 +154,7 @@ const Match = () => {
             <Card.Text>
               경기장 정보
             </Card.Text>
-            <Button variant="primary">일정 확인</Button>
+            <Button onClick={() => navigateToBooking(field)} >일정 확인</Button>
             </Card.Body>
           </CustomCard>
         ))}
