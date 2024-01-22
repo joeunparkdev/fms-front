@@ -11,7 +11,6 @@ import {
 } from "pages/SignUp/styles";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useRecoilValue, useSetRecoilState } from "recoil";
 import useSWR, { mutate } from "swr";
 import fetcher from "utils/fetcher";
 
@@ -100,7 +99,7 @@ const LogIn = () => {
   };
 
   if (data) {
-    navigate("/home");
+    navigate("/home", { replace: true });
   }
 
   return (

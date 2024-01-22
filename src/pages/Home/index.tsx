@@ -7,6 +7,7 @@ import fetcher from "utils/fetcher";
 import Layout from "layouts/App";
 import { useTokenStore } from "store/tokenStore";
 import { useTeamStore } from "store/teamStore";
+import { useUserStore } from "store/userStore";
 
 const ErrorContainer = styled.div`
   display: flex;
@@ -43,10 +44,10 @@ const Button = styled.button`
 
 const Home = () => {
   const { teamId } = useTeamStore();
+  const { id: userId } = useUserStore();
   const { accessToken } = useTokenStore();
-
   const navigate = useNavigate();
-
+  console.log(userId);
   return (
     <Layout>
       {teamId ? (
