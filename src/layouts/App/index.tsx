@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useSWR, { mutate } from "swr";
 import fetcher from "utils/fetcher";
 import { useTeamStore } from "store/teamStore";
 import { useUserStore } from "store/userStore";
 import { useTokenStore } from "store/tokenStore";
 import { BsEmojiSunglasses } from "react-icons/bs";
+import { useProfileStore } from "store/profileStore";
+import useAuthStore from "store/useAuthStore";
 
 const PageContainer = styled.div`
   display: flex;
@@ -50,7 +52,7 @@ const Card = styled.div`
   align-items: center;
 `;
 
-const StyledLink = styled.a`
+const StyledLink = styled(Link)`
   color: #445664;
   text-decoration: none;
 
@@ -104,55 +106,44 @@ interface LayoutProps {
  */
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { data, error } = useSWR("http://localhost:3000/api/users/me", fetcher);
-  const { setTeamId } = useTeamStore();
-  const { setUser, id } = useUserStore();
-  let userId = id;
+  // const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
+  const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
+  const { teamId } = useTeamStore();
+  const { id: userId, setUser } = useUserStore();
+  const { logout } = useAuthStore();
+  const { setProfile, id: profileId } = useProfileStore();
   const navigate = useNavigate();
 
+  // useEffect를 사용하여 data가 변경될 때만 setUser를 호출합니다.
+  useEffect(() => {
+    if (data) {
+      console.log(data?.data?.profile);
+      setUser(data.data);
+    }
+    if (data?.data.profile) {
+      setProfile(data.data.profile);
+    }
+  }, [data]);
+
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
+    logout();
     navigate("/login");
   };
-
-  // useEffect(() => {
-  //   const accessToken = localStorage.getItem("accessToken");
-  //   axios
-  //     .get(`http://localhost:${
-  //       process.env.REACT_APP_SERVER_PORT || 3000
-  //     }/api/users/me`, {
-  //       headers: {
-  //         Authorization: `Bearer ${accessToken}`,
-  //       },
-  //       withCredentials: true,
-  //     })
-  //     .then((res) => setUser(res.data.data))
-  //     .catch((err) => {
-  //       console.log(err);
-  //       alert(err.response?.data?.message);
-  //     });
-  // }, [setUser]);
-
-  console.log(data);
-
-  if (!data) {
-    navigate("/login");
-  }
 
   return (
     <PageContainer>
       <Menu>
         <MenuItem>
-          <StyledLink href="/home">HOME</StyledLink>
+          <StyledLink to="/home">HOME</StyledLink>
         </MenuItem>
         <MenuItem>
-          <StyledLink href="/team">TEAM</StyledLink>
+          <StyledLink to="/team">TEAM</StyledLink>
         </MenuItem>
         <MenuItem>
-          <StyledLink href="/player">PLAYER</StyledLink>
+          <StyledLink to="/player">PLAYER</StyledLink>
         </MenuItem>
         <MenuItem>
-          <StyledLink href="/strategy">STRATEGY</StyledLink>
+          <StyledLink to="/strategy">STRATEGY</StyledLink>
         </MenuItem>
         <MenuItem
           onClick={handleLogout}
@@ -165,15 +156,27 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </Menu>
       <Card>
         <h2>
-          <StyledLink href="/home">
+          <StyledLink to="/home">
             Football Management System (FMS) ⚽🔥
           </StyledLink>
 
-          <StyledLink href={`/profile/${userId}/edit`}>프로필</StyledLink>
+          <StyledLink
+            to={
+              profileId
+                ? `/profile/${profileId}`
+                : `/profile/${userId}/register`
+            }
+          >
+            프로필
+          </StyledLink>
         </h2>
-        {/* <StyledLink href={id ? `profile/${id}/edit` : "/home"}>
+        <StyledLink
+          to={
+            profileId ? `/profile/${profileId}` : `/profile/${userId}/register`
+          }
+        >
           <BsEmojiSunglasses />
-        </StyledLink> */}
+        </StyledLink>
 
         {children}
       </Card>
