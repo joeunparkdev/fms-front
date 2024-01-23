@@ -2,24 +2,8 @@ import AdminLayout from "layouts/AdminApp";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-
-const Checkbox = styled.input`
-  margin-right: 10px;
-`;
-
-const DeleteButton = styled.button`
-  padding: 5px 10px;
-  margin-left: 10px;
-  background-color: red;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: darkred;
-  }
-`;
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
 const Table = styled.table`
   width: 100%;
@@ -59,77 +43,59 @@ type SelectedUsers = {
 };
 
 const AdminUsers = () => {
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<SelectedUsers>({});
   const [error, setError] = useState<string>("");
 
-  useEffect(() => {
-    const getUsers = async () => {
-      try {
-        const accessToken = localStorage.getItem("accessToken");
-        const { data } = await axios.get(
-          "http://localhost:3001/api/admin/users",
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-            withCredentials: true,
-          }
-        );
-        setUsers(data.data);
-        setError(""); // 에러 상태를 초기화합니다.
-      } catch (err) {
-        // 에러 처리 로직
-        setError("사용자 정보를 불러오는데 실패했습니다.");
-        console.error(err);
-        // 추가적으로, err 객체에 따라 더 세부적인 에러 정보를 setError에 제공할 수 있습니다.
-      }
-    };
-    getUsers();
-  }, []);
-  const handleCheckboxChange = (userId: number) => {
-    setSelectedUsers((prevSelectedUsers) => ({
-      ...prevSelectedUsers,
-      [userId]: !prevSelectedUsers[userId],
-    }));
-  };
+  // useEffect(() => {
+  //   const getUsers = async () => {
+  //     try {
+  //       const accessToken = localStorage.getItem("accessToken");
+  //       const { data } = await axios.get(
+  //         "http://localhost:3001/api/admin/users",
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${accessToken}`,
+  //           },
+  //           withCredentials: true,
+  //         }
+  //       );
+  //       setUsers(data.data);
+  //       setError(""); // 에러 상태를 초기화합니다.
+  //     } catch (err) {
+  //       // 에러 처리 로직
+  //       setError("사용자 정보를 불러오는데 실패했습니다.");
+  //       console.error(err);
+  //       // 추가적으로, err 객체에 따라 더 세부적인 에러 정보를 setError에 제공할 수 있습니다.
+  //     }
+  //   };
+  //   getUsers();
+  // }, []);
+  const handleDelete = async (userId: number) => {
+    await axios
+      .delete(`http://localhost:3001/api/admin/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => {
+        setShow(false);
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-  const handleDeleteSelected = async () => {
-    try {
-      // Filter out the selected user ids
-      const userIdsToDelete = Object.entries(selectedUsers)
-        .filter(([_, isSelected]) => isSelected)
-        .map(([userId, _]) => userId);
-
-      // Call the API to delete the users
-      await Promise.all(
-        userIdsToDelete.map((userId) => {
-          return axios.delete(
-            `http://localhost:3001/api/admin/users/${userId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-              },
-            }
-          );
-        })
-      );
-
-      // Update the user list by filtering out the deleted users
-      setUsers(
-        users.filter((user) => !userIdsToDelete.includes(String(user.id)))
-      );
-
-      // Clear selected users
-      setSelectedUsers({});
-    } catch (err) {
-      setError("Failed to delete users.");
-      console.error(err);
-    }
+    setShow(false);
   };
 
   return (
     <AdminLayout>
+      <span>admin 만 들어올 수 있도록 프론트 로직 추가해야함</span>
       {error && <div className="error-message">{error}</div>}{" "}
       <Table>
         <TableHead>
@@ -146,11 +112,27 @@ const AdminUsers = () => {
           {users.map((user) => (
             <tr key={user.id}>
               <td>
-                <Checkbox
-                  type="checkbox"
-                  checked={selectedUsers[user.id] || false}
-                  onChange={() => handleCheckboxChange(user.id)}
-                />
+                <Button variant="Light" onClick={handleShow}>
+                  ❌
+                </Button>
+                <Modal show={show} onHide={handleClose}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>삭제</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>유저를 삭제하시겠습니까?</Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                      아니요
+                    </Button>
+                    <Button
+                      variant="primary"
+                      onClick={() => handleDelete(user.id)}
+                    >
+                      예
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
+                {/* <button onClick={handleDelete}>❌</button> */}
               </td>
               <td>{user.email}</td>
               <td>{user.name}</td>

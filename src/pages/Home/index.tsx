@@ -7,7 +7,8 @@ import fetcher from "utils/fetcher";
 import Layout from "layouts/App";
 import { useTokenStore } from "store/tokenStore";
 import { useTeamStore } from "store/teamStore";
-
+import { useUserStore } from "store/userStore";
+import { useProfileStore } from "store/profileStore";
 const ErrorContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -42,8 +43,19 @@ const Button = styled.button`
 `;
 
 const Home = () => {
+  const { data, error } = useSWR(
+    `http://localhost:${
+      process.env.REACT_APP_SERVER_PORT || 3000
+    }/api/users/me`,
+    fetcher
+  );
   const { teamId } = useTeamStore();
+  const { id: userId, setUser } = useUserStore();
   const { accessToken } = useTokenStore();
+
+  // if (data) {
+  //   setUser(data.data);
+  // }
 
   const navigate = useNavigate();
 

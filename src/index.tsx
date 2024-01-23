@@ -4,6 +4,7 @@ import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import axios from "axios";
+import "bootstrap/dist/css/bootstrap.css";
 
 axios.defaults.withCredentials = true;
 

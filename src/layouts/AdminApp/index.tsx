@@ -68,26 +68,6 @@ const ErrorMessage = styled.p`
   text-align: center;
 `;
 
-const Button = styled.button`
-  padding: 10px 20px;
-  min-width: 150px; // 버튼의 최소 너비 설정
-  border: none;
-  border-radius: 20px;
-  background-color: #000;
-  color: #fff;
-  cursor: pointer;
-  font-size: 1rem; // 폰트 크기 조정
-  margin: 0 5px; // 버튼 사이의 간격 조정
-
-  &:hover {
-    background-color: #555;
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
-`;
-
 interface LayoutProps {
   children: React.ReactNode;
 }
