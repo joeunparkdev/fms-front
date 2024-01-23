@@ -9,7 +9,7 @@ import {
   StyledForm,
   StyledInput,
 } from "pages/SignUp/styles";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTokenStore } from "store/tokenStore";
 import useAuthStore from "store/useAuthStore";
@@ -33,7 +33,6 @@ const LogIn = () => {
     });
   };
 
-  console.log(isLoggedIn);
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {

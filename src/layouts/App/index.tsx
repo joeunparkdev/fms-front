@@ -108,23 +108,23 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   // const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
   const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
-  const { teamId } = useTeamStore();
+  const { teamId, setTeamId } = useTeamStore();
   const { id: userId, setUser } = useUserStore();
   const { logout } = useAuthStore();
-  const { setProfile, id: profileId } = useProfileStore();
+  const { setProfile, id: profileId, resetProfile } = useProfileStore();
   const navigate = useNavigate();
 
   // useEffect를 사용하여 data가 변경될 때만 setUser를 호출합니다.
   useEffect(() => {
     if (data) {
-      console.log(data?.data?.profile);
+      resetProfile();
       setUser(data.data);
+      setTeamId(data.data.teamId);
     }
     if (data?.data.profile) {
       setProfile(data.data.profile);
     }
   }, [data]);
-
   const handleLogout = () => {
     logout();
     navigate("/login");

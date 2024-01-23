@@ -53,10 +53,6 @@ const Home = () => {
   const { id: userId, setUser } = useUserStore();
   const { accessToken } = useTokenStore();
 
-  // if (data) {
-  //   setUser(data.data);
-  // }
-
   const navigate = useNavigate();
 
   return (
