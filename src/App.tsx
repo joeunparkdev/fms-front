@@ -22,6 +22,7 @@ import { ReactNode, useEffect } from "react";
 interface ProtectedRouteProps {
   children: ReactNode;
 }
+import MatchBook from "pages/match/book";
 
 const App = () => {
   const { isLoggedIn } = useAuthStore();
@@ -90,7 +91,8 @@ const App = () => {
 
           {/* <Route path="/api/auth/kakao/callback" element={<KakaoCallback />} /> */}
           <Route path="/match" element={<Match />} />
-          {/* 어드민 용 페이지 */}
+          <Route path="/match/book" element={<MatchBook />} />
+      {/* 어드민 용 페이지 */}
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/teams" element={<AdminTeams />} />
           <Route path="/teamTable" element={<TeamTable />} />
