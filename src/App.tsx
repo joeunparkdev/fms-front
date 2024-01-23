@@ -18,11 +18,11 @@ import Profile from "pages/Profile";
 import RegisterProfile from "pages/RegisterProfile";
 import useAuthStore from "store/useAuthStore";
 import { ReactNode, useEffect } from "react";
+import MatchBook from "pages/match/book";
 
 interface ProtectedRouteProps {
   children: ReactNode;
 }
-import MatchBook from "pages/match/book";
 
 const App = () => {
   const { isLoggedIn } = useAuthStore();
