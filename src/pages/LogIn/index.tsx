@@ -9,35 +9,22 @@ import {
   StyledForm,
   StyledInput,
 } from "pages/SignUp/styles";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTokenStore } from "store/tokenStore";
+import useAuthStore from "store/useAuthStore";
 import useSWR, { mutate } from "swr";
 import fetcher from "utils/fetcher";
 
 const LogIn = () => {
-  const { data, error } = useSWR(
-    `http://localhost:${
-      process.env.REACT_APP_SERVER_PORT || 3000
-    }/api/users/me`,
-    fetcher
-  );
-
+  const { accessToken } = useTokenStore();
   const navigate = useNavigate();
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
   });
-
   const { email, password } = inputs;
-
-  // 로그인 후 리디렉션을 처리하기 위한 효과
-  // useEffect(() => {
-  //   const token = localStorage.getItem("accessToken");
-  //   if (token) {
-  //     navigate("/home");
-  //   }
-  // }, [navigate]);
-
+  const { login, isLoggedIn } = useAuthStore();
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
     setInputs({
@@ -61,19 +48,14 @@ const LogIn = () => {
           withCredentials: true,
         }
       );
+
       localStorage.setItem("accessToken", res.data.data.accessToken);
       localStorage.setItem("refreshToken", res.data.data.refreshToken);
-      mutate(
-        `http://localhost:${
-          process.env.REACT_APP_SERVER_PORT || 3000
-        }/api/users/me`
-      );
+      login();
+      navigate("/home", { replace: true });
     } catch (err: any) {
       console.log(err);
       alert(err.response?.data?.message);
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 2000);
     }
   };
 
@@ -98,10 +80,13 @@ const LogIn = () => {
     window.location.href = kakaoURL;
   };
 
-  if (data) {
-    navigate("/home", { replace: true });
-  }
-
+  // if (data) {
+  //   navigate("/home", { replace: true });
+  // }
+  // alert(isLoggedIn);
+  // if (isLoggedIn) {
+  //   navigate("/home", { replace: true });
+  // }
   return (
     <Container>
       {/* <div className="page-container"> */}
