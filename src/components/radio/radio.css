@@ -1,0 +1,12 @@
+.gender-element {
+}
+
+.gender-wrap {
+    display: flex;
+    align-items: center;
+}
+
+.gender-element {
+    display: flex;
+    margin-right: 10px;
+}

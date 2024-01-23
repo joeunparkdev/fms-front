@@ -1,6 +1,7 @@
 .create-team-form {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
 }
 
 .singup-logoImg-label {
@@ -14,13 +15,4 @@
 
 .singup-logoImg-input {
     display: none;
-}
-
-.gender-container {
-    display: flex;
-    flex-direction: column;
-}
-.gender-wrap {
-    display: flex;
-    align-items: center;
 }

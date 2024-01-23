@@ -1,6 +1,12 @@
+import AddressInput from 'components/AddressInput';
+import FileUploader from 'components/file/FileUploader';
+import InputBox from 'components/input/InputBox';
+import RadioLayout from 'components/radio/RadioLayout';
+import Toggle from 'components/toggle/Toggle';
 import Layout from 'layouts/App';
+import { useState } from 'react';
+import { Button } from 'react-bootstrap';
 import './create-team.css';
-import { useCallback, useEffect, useState } from 'react';
 
 const CreateTeam = () => {
     const [values, setValues] = useState({
@@ -9,71 +15,33 @@ const CreateTeam = () => {
         gender: '',
     });
 
-    const handleChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            const { id, value } = e.target;
-            setValues((prevValues) => ({
-                ...prevValues,
-                [id]: value,
-            }));
-        },
-        [setValues]
-    );
-
-    useEffect(() => {}, [values]);
+    const radioOption: RadioLayout = {
+        titleLabel: '성별',
+        option: [
+            {
+                label: '남성',
+                nameAndId: 'gender',
+                value: 'Male',
+            },
+            {
+                label: '여성',
+                nameAndId: 'gender',
+                value: 'Female',
+            },
+        ],
+    };
 
     return (
         <Layout>
             {
                 <form className="create-team-form">
-                    <label className="singup-logoImg-label" htmlFor="logoImage">
-                        팀 로고 이미지 추가
-                    </label>
-                    <input
-                        type="file"
-                        className="singup-logoImg-input "
-                        name=""
-                        id="logoImage"
-                        accept="image/*"
-                    />
-                    <label htmlFor="">팀 이름</label>
-                    <input
-                        type="text"
-                        name=""
-                        id="teamName"
-                        onChange={handleChange}
-                    />
-                    <label htmlFor="">팀 이름</label>
-                    <textarea name="" id="teamDesc" value=""></textarea>
-                    <label htmlFor="">팀 성별</label>
-                    <div className="gender-container">
-                        <div className="gender-wrap">
-                            <p>남성</p>
-                            <input
-                                type="radio"
-                                name="gender"
-                                id="gender"
-                                value={'femail'}
-                                onChange={handleChange}
-                            />
-                            <p>여성</p>
-                            <input
-                                type="radio"
-                                name="gender"
-                                id="gender"
-                                value={'male'}
-                                onChange={handleChange}
-                            />
-                            <p>혼성</p>
-                            <input
-                                type="radio"
-                                name="gender"
-                                id="gender"
-                                value="mixedGender"
-                            />
-                        </div>
-                    </div>
-                    <button>Add</button>
+                    <FileUploader descLabel="구단 로고를 등록해주세요" />
+                    <InputBox inputLabel="구단명" />
+                    <InputBox inputLabel="구단 설명" />
+                    <RadioLayout titleLabel={radioOption.titleLabel} option={radioOption.option} />
+                    <Toggle label="혼성 여부" />
+                    <AddressInput></AddressInput>
+                    <Button variant="dark">Add</Button>
                 </form>
             }
         </Layout>
