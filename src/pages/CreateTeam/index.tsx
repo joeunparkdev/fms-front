@@ -1,6 +1,6 @@
 import Layout from 'layouts/App';
 import './create-team.css';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const CreateTeam = () => {
     const [values, setValues] = useState({
@@ -9,13 +9,16 @@ const CreateTeam = () => {
         gender: '',
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { id, value } = e.target;
-        setValues((prevValues) => ({
-            ...prevValues,
-            [id]: value,
-        }));
-    };
+    const handleChange = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            const { id, value } = e.target;
+            setValues((prevValues) => ({
+                ...prevValues,
+                [id]: value,
+            }));
+        },
+        [setValues]
+    );
 
     useEffect(() => {}, [values]);
 
