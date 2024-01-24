@@ -13,7 +13,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTokenStore } from "store/tokenStore";
 import useAuthStore from "store/useAuthStore";
-import { Alert, Space } from "antd";
+import { Alert, Button, Form, Input } from "antd";
 import { set } from "date-fns";
 
 const LogIn = () => {
@@ -71,28 +71,13 @@ const LogIn = () => {
   const REDIRECT_URI = "http://localhost:3000/api/auth/kakao/callback";
   const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
-  const onKakaoLoginClick = () => {
-    // axios
-    //   .get("http://localhost:3000/api/auth/kakao",
-    //   {
-    //     withCredentials: true,
-    //   })
-    //   .then((response) => {
-    //     console.log("Kakao login successful:", response.data);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error during Kakao login:", error);
-    //   });
-    window.location.href = kakaoURL;
+  const onKakaoLoginClick = async () => {
+
+      window.location.href = kakaoURL;
+
+    
   };
 
-  // if (data) {
-  //   navigate("/home", { replace: true });
-  // }
-  // alert(isLoggedIn);
-  // if (isLoggedIn) {
-  //   navigate("/home", { replace: true });
-  // }
   return (
     <Container>
       {/* <div className="page-container"> */}
@@ -122,14 +107,6 @@ const LogIn = () => {
                 onChange={onChange}
                 required
               />
-              {/* <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="이메일"
-                value={email}
-                onChange={onChange}
-              /> */}
             </div>
           </Label>
           {/* </label> */}
@@ -144,20 +121,10 @@ const LogIn = () => {
                 onChange={onChange}
                 required
               />
-              {/* <input
-                type="password"
-                name="password"
-                placeholder="비밀번호"
-                value={password}
-                onChange={onChange}
-              /> */}
             </div>
           </Label>
           <label id="password-label"></label>
           <Label>
-            {/* <button className="contrast outline" type="submit">
-            로그인
-          </button> */}
             <StyledButton type="submit">로그인</StyledButton>
           </Label>
 
@@ -165,13 +132,10 @@ const LogIn = () => {
           <LinkContainer>
             아직 회원이 아니신가요?&nbsp;
             <Link to="/signup">회원가입 하러가기</Link>
-            {/* <button className="contrast outline">회원가입</button>
-             */}
           </LinkContainer>
           <div
             className="ms-auto"
-            style={{ cursor: "pointer", width: "50%", padding: 0 }}
-          >
+            style={{ cursor: "pointer", width: "50%", padding: 0 }}>
             <img
               src="img/kakao_login_image.png"
               alt="카카오 로그인"

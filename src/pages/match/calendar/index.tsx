@@ -126,7 +126,9 @@ const accessToken = localStorage.getItem("accessToken");
     // 멤버 정보 가져오는 함수
     const getMember = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/api/match/member", {
+        const response = await axios.get(`http://localhost:${
+          process.env.REACT_APP_SERVER_PORT || 3000
+        }/api/match/member`, {
           headers: {
             Authorization: `Bearer ${accessToken}` // Bearer 토큰 추가
           }
@@ -165,7 +167,9 @@ const accessToken = localStorage.getItem("accessToken");
     try {
 
       console.log('teamId:'+teamId);
-      const response = await axios.get("http://localhost:3001/api/match/team/schedule/"+teamId, {
+      const response = await axios.get(`http://localhost:${
+        process.env.REACT_APP_SERVER_PORT || 3000
+      }/api/match/team/schedule/`+teamId, {
         headers: {
           Authorization: `Bearer ${accessToken}` // Bearer 토큰 추가
         }

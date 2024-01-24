@@ -250,7 +250,9 @@ const MatchBook = () => {
     // 구단주 체크를 수행하는 함수
     const checkIfIsCreator = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/api/match/creator", {
+        const response = await axios.get(`http://localhost:${
+          process.env.REACT_APP_SERVER_PORT || 3000
+        }/api/match/creator`, {
           headers: {
             Authorization: `Bearer ${accessToken}` // Bearer 토큰 추가
           }
@@ -328,7 +330,9 @@ const MatchBook = () => {
 
     const getOwners = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/api/match/owners", {
+        const response = await axios.get(`http://localhost:${
+          process.env.REACT_APP_SERVER_PORT || 3000
+        }/api/match/owners`, {
           headers: {
             Authorization: `Bearer ${accessToken}` // Bearer 토큰 추가
           }
@@ -427,7 +431,9 @@ const MatchBook = () => {
           try {
             const formattedDate = date.toISOString().split('T')[0]; // 날짜를 'YYYY-MM-DD' 형식으로 포맷팅
             
-            const response = await axios.get(`http://localhost:3001/api/match/timeslots/${formattedDate}/${locationId}`, {
+            const response = await axios.get(`http://localhost:${
+              process.env.REACT_APP_SERVER_PORT || 3000
+            }/api/match/timeslots/${formattedDate}/${locationId}`, {
               headers: {
                 Authorization: `Bearer ${accessToken}` // Bearer 토큰 추가
               }
@@ -478,7 +484,9 @@ const MatchBook = () => {
     const sendMatchMessage = async () => {
       try {
 
-        await axios.post("http://localhost:3001/api/match/book", {
+        await axios.post(`http://localhost:${
+          process.env.REACT_APP_SERVER_PORT || 3000
+        }/api/match/book`, {
           date: selectedDate.toISOString().split('T')[0],
           time: selectedTime ? selectedTime : '시간 미선택',
           homeTeamId,

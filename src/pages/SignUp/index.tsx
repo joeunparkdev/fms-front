@@ -45,7 +45,9 @@ const SignUp = () => {
     }
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/auth/sign-up",
+        `http://localhost:${
+          process.env.REACT_APP_SERVER_PORT || 3000
+        }/api/auth/sign-up`,
         {
           email,
           name,

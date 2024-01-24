@@ -2,8 +2,6 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
 import Home from "pages/Home";
-import KakaoLogin from "pages/KakaoLogin/index";
-import KakaoCallback from "pages/KakaoCallBack/KakaoCallBack";
 import Calendar from "pages/Calendar/index";
 import Team from "pages/Team";
 import Player from "pages/Player";
@@ -18,11 +16,13 @@ import Profile from "pages/Profile";
 import RegisterProfile from "pages/RegisterProfile";
 import useAuthStore from "store/useAuthStore";
 import { ReactNode, useEffect } from "react";
+import KakaoSuccess from "pages/KakaoSuccess";
 import MatchBook from "pages/match/book";
 import MatchResult from "pages/MatchResult";
 import InputMatchResult from "pages/InputMatchResult";
 import InputMatchResultDetail from "pages/InputMatchResultDetail";
 import MatchPreview from "pages/MatchPreview";
+import MatchReview from "pages/MatchReview";
 import MatchCalendar from "pages/match/calendar";
 import Formation from "pages/match/formation";
 
@@ -64,22 +64,13 @@ const App = () => {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/kakaoLogin"
+        <Route
+        path="/kakaoSuccess"
         element={
-          <ProtectedRoute>
-            <KakaoLogin />
-          </ProtectedRoute>
+            <KakaoSuccess />
         }
       />
-      <Route
-        path="/api/auth/kakao/callback"
-        element={
-          <ProtectedRoute>
-            <KakaoCallback />
-          </ProtectedRoute>
-        }
-      />
+     
       {isLoggedIn ? (
         <>
           <Route path="/home" element={<Home />} />
@@ -105,6 +96,10 @@ const App = () => {
           <Route
             path="/match/:matchId/preview"
             element={<MatchPreview />}
+          ></Route>
+          <Route
+            path="/match/:matchId/review"
+            element={<MatchReview />}
           ></Route>
 
           <Route path="/match/book" element={<MatchBook />} />

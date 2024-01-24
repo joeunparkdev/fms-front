@@ -191,7 +191,7 @@ const EditProfile = () => {
 
     axios({
       method: "post",
-      url: `http://localhost:3001/api/profile/${userId}/register`,
+      url: `http://localhost:3000/api/profile/${userId}/register`,
       data: value,
       headers: {
         Authorization: `Bearer ${accessToken}`,
