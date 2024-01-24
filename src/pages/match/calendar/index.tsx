@@ -178,7 +178,7 @@ const accessToken = localStorage.getItem("accessToken");
       if (Array.isArray(resultTeam)) {
         // resultTeam 배열을 이용해 dropdownItems 배열 생성
         const newEventDates = resultTeam.reduce((acc, team) => {
-          acc[team.date] = team.logo_url; 
+          acc[team.date] = team.imageUrl; 
           return acc;
         }, {});
 
