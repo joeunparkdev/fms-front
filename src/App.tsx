@@ -2,8 +2,6 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
 import Home from "pages/Home";
-import KakaoLogin from "pages/KakaoLogin/index";
-import KakaoCallback from "pages/KakaoCallBack/KakaoCallBack";
 import Calendar from "pages/Calendar/index";
 import Team from "pages/Team";
 import Player from "pages/Player";
@@ -18,6 +16,7 @@ import Profile from "pages/Profile";
 import RegisterProfile from "pages/RegisterProfile";
 import useAuthStore from "store/useAuthStore";
 import { ReactNode, useEffect } from "react";
+import KakaoSuccess from "pages/KakaoSuccess";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -57,22 +56,13 @@ const App = () => {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/kakaoLogin"
+        <Route
+        path="/kakaoSuccess"
         element={
-          <ProtectedRoute>
-            <KakaoLogin />
-          </ProtectedRoute>
+            <KakaoSuccess />
         }
       />
-      <Route
-        path="/api/auth/kakao/callback"
-        element={
-          <ProtectedRoute>
-            <KakaoCallback />
-          </ProtectedRoute>
-        }
-      />
+     
       {isLoggedIn ? (
         <>
           <Route path="/home" element={<Home />} />

@@ -107,7 +107,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   // const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
-  const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
+  const { data, error } = useSWR("http://localhost:3000/api/users/me", fetcher);
   const { teamId } = useTeamStore();
   const { id: userId, setUser } = useUserStore();
   const { logout } = useAuthStore();

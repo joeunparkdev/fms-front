@@ -77,7 +77,7 @@ const AdminUsers = () => {
   // }, []);
   const handleDelete = async (userId: number) => {
     await axios
-      .delete(`http://localhost:3001/api/admin/users/${userId}`, {
+      .delete(`http://localhost:3000/api/admin/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
