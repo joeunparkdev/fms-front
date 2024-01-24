@@ -74,7 +74,9 @@ const AdminUsers = () => {
       try {
         const accessToken = localStorage.getItem("accessToken");
         const { data } = await axios.get(
-          `http://localhost:3001/api/admin/users?page=${page || 1}`,
+          `http://localhost:${
+            process.env.REACT_APP_SERVER_PORT || 3000
+          }/api/admin/users?page=${page || 1}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -120,7 +122,9 @@ const AdminUsers = () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
       const { data } = await axios.get(
-        `http://localhost:3001/api/admin/users?page=${page || 1}`,
+        `http://localhost:${
+          process.env.REACT_APP_SERVER_PORT || 3000
+        }/api/admin/users?page=${page || 1}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
