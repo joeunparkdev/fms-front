@@ -9,12 +9,12 @@ import {
   StyledForm,
   StyledInput,
 } from "pages/SignUp/styles";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTokenStore } from "store/tokenStore";
 import useAuthStore from "store/useAuthStore";
-import useSWR, { mutate } from "swr";
-import fetcher from "utils/fetcher";
+import { Alert, Space } from "antd";
+import { set } from "date-fns";
 
 const LogIn = () => {
   const { accessToken } = useTokenStore();
@@ -25,6 +25,7 @@ const LogIn = () => {
   });
   const { email, password } = inputs;
   const { login, isLoggedIn } = useAuthStore();
+  const [errorMessage, setErrorMessage] = useState("");
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
     setInputs({
@@ -55,7 +56,12 @@ const LogIn = () => {
       navigate("/home", { replace: true });
     } catch (err: any) {
       console.log(err);
-      alert(err.response?.data?.message);
+      // alert(err.response?.data?.message);
+      setErrorMessage(err.response?.data?.message || "로그인에 실패했습니다.");
+      setInputs({
+        email: "",
+        password: "",
+      });
     }
   };
 
@@ -95,6 +101,16 @@ const LogIn = () => {
         <StyledForm onSubmit={onSubmit}>
           {/* <form onSubmit={onSubmit}> */}
           {/* <label id="email-label"> */}
+          {errorMessage && (
+            <Alert
+              message="에러"
+              description={errorMessage}
+              type="error"
+              showIcon
+              closable
+              onClose={() => setErrorMessage("")}
+            />
+          )}
           <Label>
             <span>이메일</span>
             <div>
@@ -104,6 +120,7 @@ const LogIn = () => {
                 placeholder="이메일"
                 value={email}
                 onChange={onChange}
+                required
               />
               {/* <input
                 type="email"
@@ -125,6 +142,7 @@ const LogIn = () => {
                 placeholder="비밀번호"
                 value={password}
                 onChange={onChange}
+                required
               />
               {/* <input
                 type="password"
