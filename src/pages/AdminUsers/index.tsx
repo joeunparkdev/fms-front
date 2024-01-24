@@ -43,46 +43,62 @@ type SelectedUsers = {
 };
 
 const AdminUsers = () => {
+  const values = [true, "sm-down", "md-down", "lg-down", "xl-down", "xxl-down"];
+  const [fullscreen, setFullscreen] = useState(true);
   const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<SelectedUsers>({});
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null); // 현재 선택된 사용자의 ID 추적
+
   const [error, setError] = useState<string>("");
 
-  // useEffect(() => {
-  //   const getUsers = async () => {
-  //     try {
-  //       const accessToken = localStorage.getItem("accessToken");
-  //       const { data } = await axios.get(
-  //         "http://localhost:3001/api/admin/users",
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${accessToken}`,
-  //           },
-  //           withCredentials: true,
-  //         }
-  //       );
-  //       setUsers(data.data);
-  //       setError(""); // 에러 상태를 초기화합니다.
-  //     } catch (err) {
-  //       // 에러 처리 로직
-  //       setError("사용자 정보를 불러오는데 실패했습니다.");
-  //       console.error(err);
-  //       // 추가적으로, err 객체에 따라 더 세부적인 에러 정보를 setError에 제공할 수 있습니다.
-  //     }
-  //   };
-  //   getUsers();
-  // }, []);
-  const handleDelete = async (userId: number) => {
+  const handleClose = () => {
+    setShow(false);
+    setSelectedUserId(null); // 모달을 닫을 때 선택된 사용자 ID 초기화
+  };
+
+  const handleShow = (userId: number) => {
+    setShow(true);
+    setSelectedUserId(userId); // 선택된 사용자 ID 설정
+  };
+
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        const { data } = await axios.get(
+          "http://localhost:3001/api/admin/users",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+            withCredentials: true,
+          }
+        );
+        setUsers(data.data);
+        setError(""); // 에러 상태를 초기화합니다.
+      } catch (err) {
+        // 에러 처리 로직
+        setError("사용자 정보를 불러오는데 실패했습니다.");
+        console.error(err);
+        // 추가적으로, err 객체에 따라 더 세부적인 에러 정보를 setError에 제공할 수 있습니다.
+      }
+    };
+    getUsers();
+  }, []);
+
+  const handleDelete = async () => {
+    if (selectedUserId === null) return;
     await axios
-      .delete(`http://localhost:3000/api/admin/users/${userId}`, {
+      .delete( `http://localhost:${
+        process.env.REACT_APP_SERVER_PORT || 3000
+      }/api/admin/users/${selectedUserId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       })
       .then((res) => {
+        console.log(res);
         setShow(false);
         window.location.reload();
       })
@@ -109,10 +125,10 @@ const AdminUsers = () => {
           </tr>
         </TableHead>
         <TableBody>
-          {users.map((user) => (
-            <tr key={user.id}>
+          {users.map((aUser) => (
+            <tr key={aUser.id}>
               <td>
-                <Button variant="Light" onClick={handleShow}>
+                <Button variant="Light" onClick={() => handleShow(aUser.id)}>
                   ❌
                 </Button>
                 <Modal show={show} onHide={handleClose}>
@@ -124,21 +140,17 @@ const AdminUsers = () => {
                     <Button variant="secondary" onClick={handleClose}>
                       아니요
                     </Button>
-                    <Button
-                      variant="primary"
-                      onClick={() => handleDelete(user.id)}
-                    >
+                    <Button variant="primary" onClick={() => handleDelete()}>
                       예
                     </Button>
                   </Modal.Footer>
                 </Modal>
-                {/* <button onClick={handleDelete}>❌</button> */}
               </td>
-              <td>{user.email}</td>
-              <td>{user.name}</td>
-              <td>{user.team || "N/A"}</td>
-              <td>{user.phone || "N/A"}</td>
-              <td>{user.birthdate || "N/A"}</td>
+              <td>{aUser.email}</td>
+              <td>{aUser.name}</td>
+              <td>{aUser.team || "N/A"}</td>
+              <td>{aUser.phone || "N/A"}</td>
+              <td>{aUser.birthdate || "N/A"}</td>
             </tr>
           ))}
         </TableBody>

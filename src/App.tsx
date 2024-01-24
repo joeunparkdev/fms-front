@@ -17,6 +17,14 @@ import RegisterProfile from "pages/RegisterProfile";
 import useAuthStore from "store/useAuthStore";
 import { ReactNode, useEffect } from "react";
 import KakaoSuccess from "pages/KakaoSuccess";
+import MatchBook from "pages/match/book";
+import MatchResult from "pages/MatchResult";
+import InputMatchResult from "pages/InputMatchResult";
+import InputMatchResultDetail from "pages/InputMatchResultDetail";
+import MatchPreview from "pages/MatchPreview";
+import MatchReview from "pages/MatchReview";
+import MatchCalendar from "pages/match/calendar";
+
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -69,7 +77,6 @@ const App = () => {
           <Route path="/team" element={<Team />} />
           <Route path="/player" element={<Player />} />
           <Route path="/strategy" element={<Strategy />} />
-
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/profile/:userId/edit" element={<EditProfile />} />
           <Route path="/profile/:userId" element={<Profile />} />
@@ -80,7 +87,24 @@ const App = () => {
 
           {/* <Route path="/api/auth/kakao/callback" element={<KakaoCallback />} /> */}
           <Route path="/match" element={<Match />} />
-          {/* 어드민 용 페이지 */}
+          <Route path="/match/:matchId/result" element={<MatchResult />} />
+          <Route path="/match/:matchId/input" element={<InputMatchResult />} />
+          <Route
+            path="/match/:matchId/input/detail"
+            element={<InputMatchResultDetail />}
+          />
+          <Route
+            path="/match/:matchId/preview"
+            element={<MatchPreview />}
+          ></Route>
+          <Route
+            path="/match/:matchId/review"
+            element={<MatchReview />}
+          ></Route>
+
+          <Route path="/match/book" element={<MatchBook />} />
+          <Route path="/match/calendar" element={<MatchCalendar />} />
+      {/* 어드민 용 페이지 */}
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/teams" element={<AdminTeams />} />
           <Route path="/teamTable" element={<TeamTable />} />
