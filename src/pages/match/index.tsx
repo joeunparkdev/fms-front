@@ -9,6 +9,7 @@ import axios from "axios";
   const StadiumsContainer = styled.div`
   display: flex;
   flex-wrap: wrap; // 카드들이 줄바꿈될 수 있도록 설정
+  justify-content: center; // 카드들을 중앙 정렬
   gap: 20px; // 카드 간의 간격
   overflow-y: auto; // 세로 스크롤을 위한 오버플로우
   max-height: 100vh; 
@@ -141,7 +142,7 @@ const Match = () => {
       <h2>경기장 목록</h2>
       <StadiumsContainer>
         {getField.map((field) => (
-          <CustomCard key={field.id} style={{ width: '18rem', height:'400px',marginBottom: '20px' }}>
+          <CustomCard key={field.id} style={{ width: '20rem', height:'500px',marginBottom: '20px' }}>
             <Card.Img variant="top" src={field.image_url}
                 style={{ 
                   width: '100%',  // 이미지의 너비를 카드 너비에 맞춤
