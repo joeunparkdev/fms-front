@@ -24,6 +24,7 @@ import InputMatchResult from "pages/InputMatchResult";
 import InputMatchResultDetail from "pages/InputMatchResultDetail";
 import MatchPreview from "pages/MatchPreview";
 import MatchCalendar from "pages/match/calendar";
+import Formation from "pages/match/formation";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -108,6 +109,7 @@ const App = () => {
 
           <Route path="/match/book" element={<MatchBook />} />
           <Route path="/match/calendar" element={<MatchCalendar />} />
+          <Route path="/match/formation" element={<Formation />} />
       {/* 어드민 용 페이지 */}
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/teams" element={<AdminTeams />} />
