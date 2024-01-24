@@ -43,8 +43,9 @@ type SelectedUsers = {
 };
 
 const AdminUsers = () => {
+  const values = [true, "sm-down", "md-down", "lg-down", "xl-down", "xxl-down"];
+  const [fullscreen, setFullscreen] = useState(true);
   const [show, setShow] = useState(false);
-
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<SelectedUsers>({});
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null); // 현재 선택된 사용자의 ID 추적
@@ -142,7 +143,6 @@ const AdminUsers = () => {
                     </Button>
                   </Modal.Footer>
                 </Modal>
-                {/* <button onClick={handleDelete}>❌</button> */}
               </td>
               <td>{aUser.email}</td>
               <td>{aUser.name}</td>
