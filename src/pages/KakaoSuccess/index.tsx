@@ -7,6 +7,7 @@ import { response } from "express";
 
 const KakaoSuccess = () => {
   const navigate = useNavigate();
+  const { kakaoLogin, isLoggedIn } = useAuthStore();
 
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
@@ -30,6 +31,8 @@ const KakaoSuccess = () => {
           const { accessToken } = response.data;
 
           localStorage.setItem("accessToken", accessToken);
+          kakaoLogin();
+          navigate("/home", { replace: true });
         });
     }
 
