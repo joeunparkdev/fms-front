@@ -11,7 +11,7 @@ export const PageContainer = styled.div`
 `;
 
 export const Menu = styled.nav`
-  width: 10%;
+  width: 13%;
   height: 90%;
   background-color: white;
   padding: 2rem;
@@ -45,7 +45,6 @@ export const Card = styled.div`
 export const StyledLink = styled(Link)`
   color: #445664;
   text-decoration: none;
-
   &:hover {
     text-decoration: none;
   }

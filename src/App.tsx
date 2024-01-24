@@ -23,6 +23,7 @@ import MatchResult from "pages/MatchResult";
 import InputMatchResult from "pages/InputMatchResult";
 import InputMatchResultDetail from "pages/InputMatchResultDetail";
 import MatchPreview from "pages/MatchPreview";
+import MatchReview from "pages/MatchReview";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -103,6 +104,10 @@ const App = () => {
           <Route
             path="/match/:matchId/preview"
             element={<MatchPreview />}
+          ></Route>
+          <Route
+            path="/match/:matchId/review"
+            element={<MatchReview />}
           ></Route>
 
           <Route path="/match/book" element={<MatchBook />} />
