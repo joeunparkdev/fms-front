@@ -17,7 +17,9 @@ import {
   ProfileSection,
   StyledLink,
 } from "./styles";
+import { Typography } from "antd";
 
+const { Title } = Typography;
 interface LayoutProps {
   children: React.ReactNode;
 }
@@ -71,6 +73,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <MenuItem>
           <StyledLink to="/strategy">STRATEGY</StyledLink>
         </MenuItem>
+        <MenuItem>
+          <StyledLink
+            to={
+              profileId
+                ? `/profile/${profileId}`
+                : `/profile/${userId}/register`
+            }
+          >
+            MY PROFILE
+          </StyledLink>
+        </MenuItem>
         <MenuItem
           onClick={handleLogout}
           style={{
@@ -86,13 +99,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             Football Management System (FMS) ⚽🔥
           </StyledLink>
         </h2>
-        <StyledLink
+        {/* <StyledLink
           to={
             profileId ? `/profile/${profileId}` : `/profile/${userId}/register`
           }
         >
           <BsEmojiSunglasses /> Profile
-        </StyledLink>
+        </StyledLink> */}
 
         {children}
       </Card>
