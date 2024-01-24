@@ -14,7 +14,7 @@ import Alert from 'react-bootstrap/Alert';
 const responsiveWidth = '768px'; 
 
 const Sidebar = styled.div`
-    width: 90%;
+    width: 100%;
     background: #f8f9fa;
     padding: 20px;
     border-radius: 10px;
@@ -38,6 +38,14 @@ const TripleContainer = styled.div`
     }
 `;
 
+// 모든 자식 요소를 가운데 정렬하는 컨테이너 컴포넌트
+const CenteredContainer = styled.div`
+  display: flex;
+  justify-content: center; // 가로 방향 중앙 정렬
+  width: 100%; // 부모 컨테이너 너비에 맞춤
+`;
+
+
 const ImageContainer = styled.div`
   width: 100%; // Sidebar의 너비 전체를 사용
   margin-bottom: 20px; // 이미지와 설명 사이의 여백
@@ -58,7 +66,8 @@ const Description = styled.div`
   text-align: left; // 텍스트 왼쪽 정렬
   padding: 5px; // 텍스트 주변 패딩
 
-  height:93%;
+  width: 100%;
+  height:90%;
 
   background: #f8f9fa;
   padding: 20px;
@@ -69,8 +78,8 @@ const Description = styled.div`
 
 const DatePickerContainer = styled.div`
   .react-datepicker {
-    width: 95%; // 너비 전체 사용
-    font-size: 3em;
+    width: 80%; // 너비 전체 사용
+    font-size: 2.3em;
     
     border: 2px solid #d6d6d6; // DatePicker 테두리 색상
     border-radius: 10px; // 테두리 모서리 둥글게
@@ -141,8 +150,8 @@ interface TimeSlotProps {
 
 
 const TimeSlot = styled.div<TimeSlotProps>`
-  padding: 8px;
-  margin-bottom: 5px;
+  padding: 13px;
+  margin-bottom: 8px;
   border: 1px solid #ccc;
   border-radius: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -176,9 +185,13 @@ const TimeSlot = styled.div<TimeSlotProps>`
 const MatchImageContainer = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
   justify-content: space-around; // 이미지 사이에 동일한 여백을 줍니다.
   margin-top: 2%; // 드롭다운 아래 여백
+
+  > p {
+      justify-content: center;
+      align-self: center;
+    }
 `;
 
 const MatchImage = styled.img`
@@ -487,7 +500,7 @@ const MatchBook = () => {
     };
     //sendMatchMessage(); 
     // confirm 대화 상자를 사용하여 사용자 확인 요청
-    if (window.confirm("경기 요청하시겠습니까?")) {
+    if (window.confirm(` ${selectedDate.toISOString().split('T')[0]} ${selectedTime ? selectedTime : '시간 미선택'}자 경기 요청하시겠습니까?`)) {
       // 사용자가 '확인'을 누르면, 경기 요청 메시지를 보내는 함수 호출
       sendMatchMessage();
     }
@@ -525,16 +538,18 @@ const MatchBook = () => {
             />
       </DatePickerContainer>
       {/* 커스텀 드롭다운 컴포넌트를 사용합니다. */}
-      <h3 style={{ marginTop: '5%' }}> 상대팀 구단 선택 </h3>
-      <CustomDropdown
-        items={teamDropdownItems}
-        onSelect={handleDropdownSelect}
-        fontSize="18px" // 글꼴 크기를 설정합니다.
-        dropdownWidth="95%" // 드롭다운 박스 너비를 설정합니다.
-      />
+      <h5 style={{ marginTop: '3%' }}> 상대팀 구단 선택 </h5>
+      <CenteredContainer>
+        <CustomDropdown
+          items={teamDropdownItems}
+          onSelect={handleDropdownSelect}
+          fontSize="18px" // 글꼴 크기를 설정합니다.
+          dropdownWidth="95%" // 드롭다운 박스 너비를 설정합니다.
+        />
+      </CenteredContainer>
       <MatchImageContainer>
         <MatchImage src={homeTeamLogo} alt="홈구단 로고" />
-        <p style={{ fontSize: '50px' }}>    VS    </p>
+        <p style={{ fontSize: '30px' }}>    VS    </p>
         <MatchImage src={opponentTeamLogo} alt="상대팀 로고" />
       </MatchImageContainer>
       </div>
