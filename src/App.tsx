@@ -19,6 +19,7 @@ import RegisterProfile from "pages/RegisterProfile";
 import useAuthStore from "store/useAuthStore";
 import { ReactNode, useEffect } from "react";
 import MatchBook from "pages/match/book";
+import MatchCalendar from "pages/match/calendar";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -92,6 +93,7 @@ const App = () => {
           {/* <Route path="/api/auth/kakao/callback" element={<KakaoCallback />} /> */}
           <Route path="/match" element={<Match />} />
           <Route path="/match/book" element={<MatchBook />} />
+          <Route path="/match/calendar" element={<MatchCalendar />} />
       {/* 어드민 용 페이지 */}
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/teams" element={<AdminTeams />} />
