@@ -25,7 +25,6 @@ import MatchPreview from "pages/MatchPreview";
 import MatchReview from "pages/MatchReview";
 import MatchCalendar from "pages/match/calendar";
 
-
 interface ProtectedRouteProps {
   children: ReactNode;
 }
@@ -104,7 +103,7 @@ const App = () => {
 
           <Route path="/match/book" element={<MatchBook />} />
           <Route path="/match/calendar" element={<MatchCalendar />} />
-      {/* 어드민 용 페이지 */}
+          {/* 어드민 용 페이지 */}
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/teams" element={<AdminTeams />} />
           <Route path="/teamTable" element={<TeamTable />} />
