@@ -4,7 +4,7 @@ import "./member.css";
 
 import { Pagination } from "antd";
 import Layout from "layouts/App";
-
+import Modal from "react-bootstrap/Modal";
 
 interface Member {
   isStaff: boolean;
@@ -105,21 +105,42 @@ const ProfileTable = () => {
       console.error("멤버 정보를 불러오는 데 실패했습니다.", error);
     }
   };
+  const [show, setShow] = useState(false);
 
   const handleInviteButton = (profile: Profile) => {
     console.log("Invite button clicked!");
     setSelectedProfile(profile);
     setShowModal(true);
+    setShow(true);
   };
 
-  const handleConfirmInvite = () => {
-    // 여기에 멤버 초대 로직 추가
-    // 실제로는 서버로 초대 요청을 보내는 등의 작업이 필요
-    // 초대가 성공하면 모달을 닫거나 다음 작업을 수행할 수 있음
-    setShowModal(false);
-    setSelectedProfile(null);
+  const handleClose = () => {
+    setShow(false);
+    setSelectedProfile(null); // 모달을 닫을 때 선택된 사용자 ID 초기화
   };
 
+  const handleConfirmInvite = async () => {
+    try {
+      //TODO user's (member's) team id 
+      const teamId = 0; 
+      // Make the API call to invite the selected profile to a team //멤버 스토어에서 가져올수있나?
+      
+      const response = await axios.post(
+        `http://localhost:${process.env.REACT_APP_SERVER_PORT || 3000}/api/team/${teamId}/user/${selectedProfile?.id}`
+      );
+  
+      // Handle the response, e.g., check for success and update UI accordingly
+      console.log("Invitation API response:", response.data);
+  
+      // Close the modal and reset selectedProfile
+      setShowModal(false);
+      setSelectedProfile(null);
+    } catch (error) {
+      console.error("Error inviting member:", error);
+      // Handle errors if needed
+    }
+  };
+  
   const handleCancelInvite = () => {
     setShowModal(false);
     setSelectedProfile(null);
@@ -146,15 +167,20 @@ const ProfileTable = () => {
     <Layout>
       <div>
       {showModal && selectedProfile && (
-          <div className="modal">
-            <p>{`${selectedProfile.name} 팀에 초대하시겠습니까?`}</p>
-            <button onClick={handleConfirmInvite}>확인</button>
-            <button onClick={handleCancelInvite}>취소</button>
-          </div>
-        )}
+         <Modal show={show} onHide={handleClose}>
+         <Modal.Header closeButton>
+           <Modal.Title>초대 확인 메세지</Modal.Title>
+         </Modal.Header>
+         <Modal.Body>{`${selectedProfile?.name} 팀에 초대하시겠습니까?`}</Modal.Body>
+         <Modal.Footer>
+         <button onClick={handleConfirmInvite}>확인</button>
+        <button onClick={handleCancelInvite}>취소</button>
+         </Modal.Footer>
+       </Modal>
+      )};
         <h2>멤버 정보</h2>
         <div>
-          
+        <div className="search-container">
           <input
             type="text"
             placeholder="이름 검색"
@@ -167,6 +193,7 @@ const ProfileTable = () => {
             }}
           />
           <button onClick={handleSearchButtonClick}>검색</button>
+        </div>
         </div>
         <table>
           <thead>
@@ -223,7 +250,8 @@ const ProfileTable = () => {
                   {profile.user.member[0]?.isStaff ? "스태프" : "일반 회원"}
                 </td>
                 <td>{profile.user.member[0]?.team.name}</td>
-                <td>{profile.user.member[0]?.joinDate}</td>
+                <td>{new Date(profile.user.member[0]?.joinDate).toLocaleDateString()}</td>
+
 
                 <td>
                   <button onClick={() => handleInviteButton(profile)}>
