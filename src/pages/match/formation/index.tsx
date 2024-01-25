@@ -9,6 +9,7 @@ import { ko } from 'date-fns/locale';
 import Dropdown from 'react-bootstrap/Dropdown';
 import CustomDropdown from '../../../components/CustomDropdown';
 import Alert from 'react-bootstrap/Alert';
+import DraggableCircle from "components/DraggableCircle";
 
 
 const responsiveWidth = '768px'; 
@@ -47,86 +48,17 @@ const CenteredContainer = styled.div`
 
 
 const ImageContainer = styled.div`
-  width: 100%; // Sidebar의 너비 전체를 사용
-  margin-bottom: 20px; // 이미지와 설명 사이의 여백
+  position: relative;
+  height: auto; 
 `;
 
 
 const Image = styled.img`
-  width: 90%;
-  height: auto; // 이미지의 원래 비율을 유지하면서 너비에 맞춰서 높이 조정
-  aspect-ratio: 1 / 1; // 정사각형 비율 유지
+  width: 55.5%;
 
   @media (max-width: ${responsiveWidth}) {
-    width: 80%; // 화면이 작아지면 너비를 100%로 설정하여 가로로 꽉 차게 합니다.
+    width: 40%; // 화면이 작아지면 너비를 100%로 설정하여 가로로 꽉 차게 합니다.
   }
-`;
-
-const Description = styled.div`
-  text-align: left; // 텍스트 왼쪽 정렬
-  padding: 5px; // 텍스트 주변 패딩
-
-  width: 100%;
-  height:90%;
-
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 10px;
-  border: 2px solid #d6d6d6; /* 선명한 회색 테두리를 추가 */
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-`;
-
-const DatePickerContainer = styled.div`
-  .react-datepicker {
-    width: 80%; // 너비 전체 사용
-    font-size: 2.3em;
-    
-    border: 2px solid #d6d6d6; // DatePicker 테두리 색상
-    border-radius: 10px; // 테두리 모서리 둥글게
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); // 그림자 추가
-  }
-
-  .react-datepicker__header {
-    background-color: #f8f9fa; // 배경 테마와 비슷한 색상
-    // ... 기타 스타일 ...
-  }
-
-  .react-datepicker__month-container {
-    width: 100%; // 달력 뒤 배경의 너비를 100%로 설정
-  }
-
-  .react-datepicker__day-name, .react-datepicker__day, .react-datepicker__time-name {
-    width: 13%;
-    color: #333; // 텍스트 색상 조정
-    font-size: 20px; // 폰트 크기 조정
-  }
-
-  .react-datepicker__current-month{
-    font-size: 0.5em;
-  }
-
-  /* day: 주말 날짜 */
-  .react-datepicker__day:nth-child(1){ 
-      color:red; /* 일요일 날짜*/
-  }
-  .react-datepicker__day:nth-child(7){
-      color:blue; /* 토요일 날짜 */
-  }
-  
-  /* day-name: 요일 */
-  .react-datepicker__day-name:nth-child(1){
-      color: #FF5555; /* 일요일 */
-  }
-  .react-datepicker__day-name:nth-child(7){
-      color:blue; /* 토요일 */
-  }
-
-  // 이전 날짜의 글씨를 흐리게 하는 스타일
-  .react-datepicker__day--disabled {
-    opacity: 0.5; // 흐리게 표시
-  }
-
-  // 여기에 더 많은 커스텀 스타일을 추가할 수 있습니다.
 `;
 
 const ReservationInfo = styled.div`
@@ -182,25 +114,6 @@ const TimeSlot = styled.div<TimeSlotProps>`
   }
 `;
 
-const MatchImageContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  justify-content: space-around; // 이미지 사이에 동일한 여백을 줍니다.
-  margin-top: 2%; // 드롭다운 아래 여백
-
-  > p {
-      justify-content: center;
-      align-self: center;
-    }
-`;
-
-const MatchImage = styled.img`
-  max-width: 30%; // 컨테이너 너비에 맞춤
-  height: auto; // 이미지 비율 유지
-  border: 1px solid #d6d6d6; // 테두리 적용
-  border-radius: 10px; // 모서리 둥글게
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // 그림자 효과
-`;
 
 
 const Button = styled.button`
@@ -232,7 +145,7 @@ const CancelButton = styled(Button)`
   background-color:#808080;
 `;
 
-const MatchBook = () => {
+const Formation = () => {
 
   const navigate = useNavigate();
 
@@ -250,14 +163,12 @@ const MatchBook = () => {
     // 구단주 체크를 수행하는 함수
     const checkIfIsCreator = async () => {
       try {
-        const response = await axios.get(`http://localhost:${
-          process.env.REACT_APP_SERVER_PORT || 3000
-        }/api/match/creator`, {
+        const response = await axios.get("http://localhost:3001/api/match/creator", {
           headers: {
             Authorization: `Bearer ${accessToken}` // Bearer 토큰 추가
           }
         });
-        const homeTeamLogo = response.data?.data[0]?.imageUrl;
+        const homeTeamLogo = response.data?.data[0]?.logoUrl;
         const homeTeamId = response.data?.data[0]?.id;
         setHomeTeamLogo(homeTeamLogo);
         setHomeTeamId(homeTeamId);
@@ -268,6 +179,8 @@ const MatchBook = () => {
 
     checkIfIsCreator(); // 데이터를 불러오는 함수 호출
   }, []);
+
+
 
   /*********  달력  **********/
 
@@ -297,105 +210,6 @@ const MatchBook = () => {
       fetchReservations(date);
     }
   };
-
-
-
-  /*********  상대팀 구단 선택(드롭다운)  **********/
-
-  interface DropdownItem {
-    label: string;
-    value: string;
-  }
-
-  interface Team {
-    id:number;
-    name: string;
-    creator: {
-      email: string;
-    };
-    imageUrl: string;
-  }
-
-  // 선택된 날짜의 예약 정보를 관리하는 상태
-  const [teamDropdownItems, setDropdownItems] = useState<DropdownItem[]>([]);
-  const [opponentTeamLogo, setOpponentTeamLogo] = useState<string>('');
-  const [allTeams, setAllTeams] = useState<Team[]>([]);
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
-
-  useEffect(() => {
-    // 드롭다운의 첫 번째 항목을 기본값으로 설정
-    if (dropdownItems.length > 0) {
-      setSelectedItem(dropdownItems[0].value);
-    }
-
-    const getOwners = async () => {
-      try {
-        const response = await axios.get(`http://localhost:${
-          process.env.REACT_APP_SERVER_PORT || 3000
-        }/api/match/owners`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}` // Bearer 토큰 추가
-          }
-        });
-        const resultTeam = response.data.data;
-
-        // 전체 팀 데이터 저장
-        setAllTeams(resultTeam);
-
-        console.log("resultTeam:",resultTeam);
-
-        if (Array.isArray(resultTeam)) {
-          // resultTeam 배열을 이용해 dropdownItems 배열 생성
-          const newDropdownItems = resultTeam.map(team => ({
-            label: `${team.name} 구단주`, // 예: 'XX FC 구단주'
-            value: team.creator.email, // 예: 'XX FC 구단주 이메일'
-          }));
-  
-          // 상태 업데이트
-          setDropdownItems(newDropdownItems);
-          
-          // 드롭다운의 첫 번째 항목을 기본값으로 설정
-          if (newDropdownItems.length > 0) {
-            setSelectedItem(newDropdownItems[0].value);
-            setSelectedTeam(resultTeam[0]);
-            setOpponentTeamLogo(resultTeam[0].imageUrl);
-          }
-        } else {
-          console.log('resultTeam is not an array:', resultTeam);
-        }
-
-      } catch (error) {
-        console.error("데이터 불러오기 실패:", error);
-      }
-    };
-
-    getOwners(); 
-  }, []);
-
-  // 드롭다운에서 아이템을 선택했을 때 호출되는 함수
-  const handleDropdownSelect = (value: string) => {
-    setSelectedItem(value); // 선택된 아이템을 상태에 업데이트합니다.
-
-    // 선택된 구단주의 로고 URL 찾기
-    const selectedTeam = allTeams.find(team => team.creator.email === value);
-
-    if (selectedTeam) {
-      setSelectedTeam(selectedTeam);
-    }
-
-    if (selectedTeam && selectedTeam.imageUrl) {
-      setOpponentTeamLogo(selectedTeam.imageUrl);
-    }
-
-  };
-
-  // 드롭다운에 표시할 아이템 목록
-  const dropdownItems = [
-    { label: 'XX FC 구단주', value: 'XX FC 구단주 이메일' },
-    { label: 'YY FC 구단주', value: 'YY FC 구단주 이메일' },
-    { label: 'ZZ FC 구단주', value: 'ZZ FC 구단주 이메일' },
-  ];
-
 
 
   /*********  예약정보(예약 시간대별 리스트)  **********/
@@ -431,9 +245,7 @@ const MatchBook = () => {
           try {
             const formattedDate = date.toISOString().split('T')[0]; // 날짜를 'YYYY-MM-DD' 형식으로 포맷팅
             
-            const response = await axios.get(`http://localhost:${
-              process.env.REACT_APP_SERVER_PORT || 3000
-            }/api/match/timeslots/${formattedDate}/${locationId}`, {
+            const response = await axios.get(`http://localhost:3001/api/match/timeslots/${formattedDate}/${locationId}`, {
               headers: {
                 Authorization: `Bearer ${accessToken}` // Bearer 토큰 추가
               }
@@ -470,27 +282,15 @@ const MatchBook = () => {
       return;
     }
 
-    // 날짜가 선택되었을 경우 로그 출력 및 다른 처리
-    console.log({
-      save: '경기 요청',
-      date: selectedDate.toISOString().split('T')[0],
-      time: selectedTime ? selectedTime : '시간 미선택',
-      team: selectedItem ? selectedItem : '팀 미선택',
-      location_id: locationId,
-      homeTeamId: homeTeamId,
-      awayTeamId: selectedTeam?.id
-    });
 
     const sendMatchMessage = async () => {
       try {
 
-        await axios.post(`http://localhost:${
-          process.env.REACT_APP_SERVER_PORT || 3000
-        }/api/match/book`, {
+        await axios.post("http://localhost:3001/api/match/book", {
           date: selectedDate.toISOString().split('T')[0],
           time: selectedTime ? selectedTime : '시간 미선택',
           homeTeamId,
-          awayTeamId: selectedTeam?.id,
+          awayTeamId: 1,
           fieldId: locationId
         }, {
           headers: {
@@ -521,45 +321,12 @@ const MatchBook = () => {
       <div>
         <Sidebar>
             <ImageContainer>
-            <Image src={imageUrl} alt="경기장 사진" />
+            <Image src='../../img/field.png' alt="경기장 사진" />
+                <DraggableCircle bounds="parent" />
+                <DraggableCircle bounds="parent" />
+                <DraggableCircle bounds="parent" />
             </ImageContainer>
-            <Description>
-            <h4>경기장명</h4>
-            <p >{fieldName}</p>
-            <h4>경기장 위치</h4>
-            <p>{address}</p>
-            <p><b>☎ 전화번호:</b> {phone}</p>
-            {/* 여기에 더 많은 상세 정보를 추가할 수 있습니다. */}
-            </Description>
         </Sidebar>
-      </div>
-      <div>
-      <DatePickerContainer>
-            <DatePicker
-              selected={selectedDate}
-              onChange={(date: Date | null) => handleDateChange(date)}
-              inline
-              className="custom-datepicker"
-              locale={ko}
-              filterDate={(date) => !isPastDate(date)} // 오늘 이후의 날짜만 활성화
-              showDisabledMonthNavigation
-            />
-      </DatePickerContainer>
-      {/* 커스텀 드롭다운 컴포넌트를 사용합니다. */}
-      <h5 style={{ marginTop: '3%' }}> 상대팀 구단 선택 </h5>
-      <CenteredContainer>
-        <CustomDropdown
-          items={teamDropdownItems}
-          onSelect={handleDropdownSelect}
-          fontSize="18px" // 글꼴 크기를 설정합니다.
-          dropdownWidth="95%" // 드롭다운 박스 너비를 설정합니다.
-        />
-      </CenteredContainer>
-      <MatchImageContainer>
-        <MatchImage src={homeTeamLogo} alt="홈구단 로고" />
-        <p style={{ fontSize: '30px' }}>    VS    </p>
-        <MatchImage src={opponentTeamLogo} alt="상대팀 로고" />
-      </MatchImageContainer>
       </div>
       <div>
         <ReservationInfo>
@@ -596,4 +363,4 @@ const MatchBook = () => {
   );
 };
 
-export default MatchBook;
+export default Formation;
