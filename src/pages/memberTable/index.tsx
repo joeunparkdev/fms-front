@@ -4,30 +4,33 @@ import "./member.css";
 
 import { Pagination } from "antd";
 import Layout from "layouts/App";
-// Profile 정보의 타입을 정의
+
 interface Member {
   isStaff: boolean;
   joinDate: string;
   team: Team;
 }
+
 interface Team {
   name: string;
 }
+
 interface User {
   member: Member[];
 }
+
 interface Profile {
   id: number;
   name: string;
   skillLevel: number;
   weight: number;
   height: number;
-  preferredPosition: string; //enum?
+  preferredPosition: string;
   image_url: string;
   age: number;
   phone: string;
-  birthdate: Date; //string?
-  gender: string; //enum?
+  birthdate: Date;
+  gender: string;
   user: User;
 }
 
@@ -36,26 +39,42 @@ const ProfileTable = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
   const [total, setTotal] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedProfiles, setSelectedProfiles] = useState<number[]>([]);
+
+  const fetchProfiles = async () => {
+    try {
+      let apiUrl = `http://localhost:${process.env.REACT_APP_SERVER_PORT || 3000}/api/profile?page=1`;
+  
+      // 검색어가 있는 경우 검색 쿼리 추가
+      if (searchQuery.trim() !== '') {
+        apiUrl += `&name=${searchQuery}`;
+      }
+  
+      const response = await axios.get(apiUrl);
+  
+      setProfiles(response.data.data.data);
+      setTotal(response.data.data.total);
+    } catch (error) {
+      console.error("프로필을 불러오는 중 오류 발생:", error);
+    }
+  };
+  
+  
+  
 
   useEffect(() => {
-    async function fetchProfiles() {
-      try {
-        const response = await axios.get(
-          `http://localhost:${
-            process.env.REACT_APP_SERVER_PORT || 3000
-          }/api/profile?page=1`
-        );
-        setProfiles(response.data.data.data);
-        setTotal(response.data.data.total);
-      } catch (error) {
-        console.error("멤버 정보를 불러오는 데 실패했습니다.", error);
-      }
-    }
+    // Perform the search directly when the user stops typing
+    const delay = setTimeout(() => {
+      fetchProfiles();
+    }, 500);
 
-    fetchProfiles();
-  }, []);
+    // Clear the timeout on component unmount or when the dependencies change
+    return () => clearTimeout(delay);
+  }, [currentPage, searchQuery]);
 
-  const [currentPage, setCurrentPage] = useState(1);
+
   const changePage = async (page: number) => {
     try {
       const accessToken = localStorage.getItem("accessToken");
@@ -67,7 +86,7 @@ const ProfileTable = () => {
       } = await axios.get(
         `http://localhost:${
           process.env.REACT_APP_SERVER_PORT || 3000
-        }/api/profile?page=${page || 1}`,
+        }/api/profile?page=${page || 1}&name=${searchQuery}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -102,13 +121,58 @@ const ProfileTable = () => {
     setSelectedProfile(null);
   };
 
+  const handleSearchButtonClick = () => {
+    fetchProfiles();
+  };
+
+  const handleCheckboxChange = (profileId: number) => {
+    // Toggle the selected state of the profile with the given ID
+    setSelectedProfiles((prevSelectedProfiles) => {
+      if (prevSelectedProfiles.includes(profileId)) {
+        return prevSelectedProfiles.filter((id) => id !== profileId);
+      } else {
+        return [...prevSelectedProfiles, profileId];
+      }
+    });
+  };
+
+  const handleInviteSelected = () => {};
+
   return (
     <Layout>
       <div>
         <h2>멤버 정보</h2>
+        <div>
+          <input
+            type="text"
+            placeholder="이름 검색"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                fetchProfiles();
+              }
+            }}
+          />
+          <button onClick={handleSearchButtonClick}>검색</button>
+        </div>
         <table>
           <thead>
             <tr>
+              <th>
+                <input
+                  type="checkbox"
+                  checked={selectedProfiles.length === profiles.length}
+                  onChange={() => {
+                    // Toggle all checkboxes when the header checkbox is clicked
+                    setSelectedProfiles((prevSelectedProfiles) =>
+                      prevSelectedProfiles.length === profiles.length
+                        ? []
+                        : profiles.map((profile) => profile.id)
+                    );
+                  }}
+                />
+              </th>
               <th>ID</th>
               <th>이름</th>
               <th>실력</th>
@@ -119,7 +183,6 @@ const ProfileTable = () => {
               <th>나이</th>
               <th>성별</th>
               <th>스태프 여부</th>
-
               {<th>팀 이름</th>}
               {<th>가입일</th>}
               <th>신청</th>
@@ -128,6 +191,13 @@ const ProfileTable = () => {
           <tbody>
             {profiles.map((profile) => (
               <tr key={profile.id}>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={selectedProfiles.includes(profile.id)}
+                    onChange={() => handleCheckboxChange(profile.id)}
+                  />
+                </td>
                 <td>{profile.id}</td>
                 <td>{profile.name}</td>
                 <td>{profile.skillLevel}</td>
@@ -142,6 +212,7 @@ const ProfileTable = () => {
                 </td>
                 <td>{profile.user.member[0]?.team.name}</td>
                 <td>{profile.user.member[0]?.joinDate}</td>
+
                 <td>
                   <button onClick={() => handleInviteButton(profile)}>
                     초대
@@ -151,12 +222,16 @@ const ProfileTable = () => {
             ))}
           </tbody>
         </table>
+        <div>
+          <button onClick={handleInviteSelected}>선택된 멤버 초대</button>
+        </div>
         <Pagination
-          defaultCurrent={currentPage} // 현재 클릭한 페이지
-          total={total} // 데이터 총 개수
-          defaultPageSize={5} // 페이지 당 데이터 개수
+          defaultCurrent={currentPage}
+          total={total}
+          defaultPageSize={5}
           onChange={(value) => {
-            changePage(value);
+            setCurrentPage(value);
+            changePage(value); 
           }}
         />
         {showModal && selectedProfile && (
