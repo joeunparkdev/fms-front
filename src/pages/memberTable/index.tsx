@@ -5,6 +5,7 @@ import "./member.css";
 import { Pagination } from "antd";
 import Layout from "layouts/App";
 
+
 interface Member {
   isStaff: boolean;
   joinDate: string;
@@ -45,24 +46,28 @@ const ProfileTable = () => {
 
   const fetchProfiles = async () => {
     try {
-      let apiUrl = `http://localhost:${process.env.REACT_APP_SERVER_PORT || 3000}/api/profile?page=1`;
-  
+      let apiUrl = `http://localhost:${
+        process.env.REACT_APP_SERVER_PORT || 3000
+      }/api/profile?page=1`;
+
       // 검색어가 있는 경우 검색 쿼리 추가
-      if (searchQuery.trim() !== '') {
+      if (searchQuery.trim() !== "") {
         apiUrl += `&name=${searchQuery}`;
       }
-  
-      const response = await axios.get(apiUrl);
-  
+      const accessToken = localStorage.getItem("accessToken");
+      const response = await axios.get(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        withCredentials: true,
+      });
+
       setProfiles(response.data.data.data);
       setTotal(response.data.data.total);
     } catch (error) {
       console.error("프로필을 불러오는 중 오류 발생:", error);
     }
   };
-  
-  
-  
 
   useEffect(() => {
     // Perform the search directly when the user stops typing
@@ -73,7 +78,6 @@ const ProfileTable = () => {
     // Clear the timeout on component unmount or when the dependencies change
     return () => clearTimeout(delay);
   }, [currentPage, searchQuery]);
-
 
   const changePage = async (page: number) => {
     try {
@@ -141,8 +145,16 @@ const ProfileTable = () => {
   return (
     <Layout>
       <div>
+      {showModal && selectedProfile && (
+          <div className="modal">
+            <p>{`${selectedProfile.name} 팀에 초대하시겠습니까?`}</p>
+            <button onClick={handleConfirmInvite}>확인</button>
+            <button onClick={handleCancelInvite}>취소</button>
+          </div>
+        )}
         <h2>멤버 정보</h2>
         <div>
+          
           <input
             type="text"
             placeholder="이름 검색"
@@ -231,16 +243,10 @@ const ProfileTable = () => {
           defaultPageSize={5}
           onChange={(value) => {
             setCurrentPage(value);
-            changePage(value); 
+            changePage(value);
           }}
         />
-        {showModal && selectedProfile && (
-          <div className="modal">
-            <p>{`${selectedProfile.name} 팀에 초대하시겠습니까?`}</p>
-            <button onClick={handleConfirmInvite}>확인</button>
-            <button onClick={handleCancelInvite}>취소</button>
-          </div>
-        )}
+       
       </div>
     </Layout>
   );

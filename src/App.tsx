@@ -35,6 +35,7 @@ interface ProtectedRouteProps {
 
 const App = () => {
     const { isLoggedIn } = useAuthStore();
+   // const {isStaff} = useAuthStore();
     const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         const navigate = useNavigate();
 
