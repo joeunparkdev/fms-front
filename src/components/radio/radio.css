@@ -1,12 +1,21 @@
-.gender-element {
+.radio-layout {
+    display: flex;
+    flex-direction: column; /* 세로로 배치 */
+    align-items: flex-start; /* 왼쪽 정렬 */
 }
 
 .gender-wrap {
     display: flex;
-    align-items: center;
+    flex-direction: row; /* 라디오 버튼을 가로로 배치 */
+    align-items: center; /* 가운데 정렬 */
+    margin-top: 10px; /* titleLabel과 라디오 버튼 사이의 간격 조정 */
 }
 
 .gender-element {
     display: flex;
     margin-right: 10px;
+}
+
+.title-label {
+    margin-bottom: 10px; /* titleLabel을 밑으로 내리기 위한 간격 조정 */
 }

@@ -16,3 +16,7 @@
 .singup-logoImg-input {
     display: none;
 }
+
+.location-container {
+    display: flex;
+}

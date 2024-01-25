@@ -1,15 +1,15 @@
-import React, { useEffect } from "react";
-import axios from "axios";
-import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
-import useSWR, { mutate } from "swr";
-import fetcher from "utils/fetcher";
-import { useTeamStore } from "store/teamStore";
-import { useUserStore } from "store/userStore";
-import { useTokenStore } from "store/tokenStore";
-import { BsEmojiSunglasses } from "react-icons/bs";
-import { useProfileStore } from "store/profileStore";
-import useAuthStore from "store/useAuthStore";
+import React, { useEffect } from 'react';
+import axios from 'axios';
+import styled from 'styled-components';
+import { Link, useNavigate } from 'react-router-dom';
+import useSWR, { mutate } from 'swr';
+import fetcher from 'utils/fetcher';
+import { useTeamStore } from 'store/teamStore';
+import { useUserStore } from 'store/userStore';
+import { useTokenStore } from 'store/tokenStore';
+import { BsEmojiSunglasses } from 'react-icons/bs';
+import { useProfileStore } from 'store/profileStore';
+import useAuthStore from 'store/useAuthStore';
 
 const PageContainer = styled.div`
     display: flex;
@@ -109,77 +109,65 @@ interface LayoutProps {
  */
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  // const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
-  const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
-  const { teamId, setTeamId } = useTeamStore();
-  const { id: userId, setUser } = useUserStore();
-  const { logout } = useAuthStore();
-  const { setProfile, id: profileId, resetProfile } = useProfileStore();
-  const navigate = useNavigate();
+    // const { data, error } = useSWR("http://localhost:3001/api/users/me", fetcher);
+    const { data, error } = useSWR('http://localhost:3001/api/users/me', fetcher);
+    const { teamId, setTeamId } = useTeamStore();
+    const { id: userId, setUser } = useUserStore();
+    const { logout } = useAuthStore();
+    const { setProfile, id: profileId, resetProfile } = useProfileStore();
+    const navigate = useNavigate();
 
-  // useEffect를 사용하여 data가 변경될 때만 setUser를 호출합니다.
-  useEffect(() => {
-    if (data) {
-      resetProfile();
-      setUser(data.data);
-      setTeamId(data.data.teamId);
-    }
-    if (data?.data.profile) {
-      setProfile(data.data.profile);
-    }
-  }, [data]);
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+    // useEffect를 사용하여 data가 변경될 때만 setUser를 호출합니다.
+    useEffect(() => {
+        if (data) {
+            resetProfile();
+            setUser(data.data);
+            setTeamId(data.data.teamId);
+        }
+        if (data?.data.profile) {
+            setProfile(data.data.profile);
+        }
+    }, [data]);
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    };
 
-  return (
-    <PageContainer>
-      <Menu>
-        <MenuItem>
-          <StyledLink to="/home">HOME</StyledLink>
-        </MenuItem>
-        <MenuItem>
-          <StyledLink to="/team">TEAM</StyledLink>
-        </MenuItem>
-        <MenuItem>
-          <StyledLink to="/player">PLAYER</StyledLink>
-        </MenuItem>
-        <MenuItem>
-          <StyledLink to="/strategy">STRATEGY</StyledLink>
-        </MenuItem>
-        <MenuItem
-          onClick={handleLogout}
-          style={{
-            color: "#445664",
-          }}
-        >
-          LOGOUT
-        </MenuItem>
-      </Menu>
-      <Card>
-        <h2>
-          <StyledLink to="/home">
-            Football Management System (FMS) ⚽🔥
-          </StyledLink>
+    return (
+        <PageContainer>
+            <Menu>
+                <MenuItem>
+                    <StyledLink to="/home">HOME</StyledLink>
+                </MenuItem>
+                <MenuItem>
+                    <StyledLink to="/team">TEAM</StyledLink>
+                </MenuItem>
+                <MenuItem>
+                    <StyledLink to="/player">PLAYER</StyledLink>
+                </MenuItem>
+                <MenuItem>
+                    <StyledLink to="/strategy">STRATEGY</StyledLink>
+                </MenuItem>
+                <MenuItem
+                    onClick={handleLogout}
+                    style={{
+                        color: '#445664',
+                    }}
+                >
+                    LOGOUT
+                </MenuItem>
+            </Menu>
+            <Card>
+                <h2>
+                    <StyledLink to="/home">Football Management System (FMS) ⚽🔥</StyledLink>
 
-          <StyledLink
-            to={
-              profileId
-                ? `/profile/${profileId}`
-                : `/profile/${userId}/register`
-            }
-          >
-            프로필
-          </StyledLink>
-        </h2>
-        <StyledLink
-          to={
-            profileId ? `/profile/${profileId}` : `/profile/${userId}/register`
-          }
-        >
-          <BsEmojiSunglasses />
-        </StyledLink>
+                    <StyledLink to={profileId ? `/profile/${profileId}` : `/profile/${userId}/register`}>
+                        프로필
+                    </StyledLink>
+                </h2>
+                <StyledLink to={profileId ? `/profile/${profileId}` : `/profile/${userId}/register`}>
+                    <BsEmojiSunglasses />
+                </StyledLink>
 
                 {children}
             </Card>

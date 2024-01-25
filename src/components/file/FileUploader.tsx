@@ -3,6 +3,7 @@ import './file-uploader.css';
 
 interface FileUploaderType {
     descLabel: string;
+    changedFunc: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const FileUploader = (props: FileUploaderType) => {
@@ -16,6 +17,7 @@ const FileUploader = (props: FileUploaderType) => {
         return new Promise<void>((resolve) => {
             reader.onload = () => {
                 setImageSrc(reader.result || null);
+                props.changedFunc(e);
                 resolve();
             };
         });
