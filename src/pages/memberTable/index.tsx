@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./member.css";
-
+import Layout from "layouts/App";
+import { Pagination } from "antd";
 // Profile 정보의 타입을 정의
 interface Member {
   isStaff: boolean;
@@ -33,6 +34,7 @@ const ProfileTable = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     async function fetchProfiles() {
@@ -43,11 +45,13 @@ const ProfileTable = () => {
           }/api/profile`
         );
         const profile = Array.isArray(response.data.data)
-          ? response.data.data.map((profile: Profile) => ({ ...profile }))
+          ? response.data.data.data.map((profile: Profile) => ({ ...profile }))
           : [];
-        console.log(response);
-        console.log(profile);
+        console.log("response=",response);
+        console.log("response.data.data.data=",response.data.data.data);
+        console.log("profile=",profile);
         setProfiles(profile);
+        setTotal(response.data.data.data.total);
       } catch (error) {
         console.error("멤버 정보를 불러오는 데 실패했습니다.", error);
       }
@@ -74,8 +78,31 @@ const ProfileTable = () => {
     setShowModal(false);
     setSelectedProfile(null);
   };
+  
+  const changePage = async (page: number) => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const { data } = await axios.get(
+        `http://localhost:${
+          process.env.REACT_APP_SERVER_PORT || 3000
+        }/api/profile?page=${page || 1}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          withCredentials: true,
+        }
+      );
+      setTotal(data.total);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
+  const [currentPage, setCurrentPage] = useState(1);
   return (
+    
+    <Layout>
     <div>
       <h2>멤버 정보</h2>
       <table>
@@ -130,6 +157,15 @@ const ProfileTable = () => {
         </div>
       )}
     </div>
+    <Pagination
+        defaultCurrent={currentPage} // 현재 클릭한 페이지
+        total={total} // 데이터 총 개수
+        defaultPageSize={5} // 페이지 당 데이터 개수
+        onChange={(value) => {
+          changePage(value);
+        }}
+      />
+    </Layout>
   );
 };
 
