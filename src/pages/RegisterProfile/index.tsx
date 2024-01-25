@@ -185,7 +185,7 @@ const RegisterProfile = () => {
 
     axios({
       method: "post",
-      url: `http://localhost:${process.env.REACT_APP_SERVER_PORT}/api/profile/${userId}/register`,
+      url: `http://localhost:${process.env.REACT_APP_SERVER_PORT}/api/profile/`,
       data: value,
       headers: {
         Authorization: `Bearer ${accessToken}`,

@@ -62,12 +62,7 @@ export const imgAxios = axios.create({
 axios.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
-    if (
-      typeof config.headers.Authorization === "string" &&
-      config.headers.Authorization.includes("null")
-    ) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    config.headers.Authorization = `Bearer ${token}`;
 
     return config;
   },
@@ -84,8 +79,9 @@ axios.interceptors.response.use(
   async (error) => {
     const originalConfig = error.config;
     const { logout } = useAuthStore.getState();
-    if (error.response && error.response.status === 401) {
+    if (error.response.status === 401) {
       try {
+        console.log("roatate token");
         const refreshToken = localStorage.getItem("refreshToken");
         if (!refreshToken) {
           throw new Error("Refresh token not available.");
@@ -116,7 +112,6 @@ axios.interceptors.response.use(
       }
     }
 
-    // 재시도 플래그가 설정된 요청에 대해서는 여기서 처리
     localStorage.clear();
     return Promise.reject(error);
   }
