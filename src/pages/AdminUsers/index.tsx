@@ -4,6 +4,8 @@ import axios from "axios";
 import styled from "styled-components";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import { useSearchParams } from "react-router-dom";
+import { Pagination } from "antd";
 
 const Table = styled.table`
   width: 100%;
@@ -43,8 +45,9 @@ type SelectedUsers = {
 };
 
 const AdminUsers = () => {
+  const values = [true, "sm-down", "md-down", "lg-down", "xl-down", "xxl-down"];
+  const [fullscreen, setFullscreen] = useState(true);
   const [show, setShow] = useState(false);
-
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<SelectedUsers>({});
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null); // 현재 선택된 사용자의 ID 추적
@@ -60,13 +63,20 @@ const AdminUsers = () => {
     setShow(true);
     setSelectedUserId(userId); // 선택된 사용자 ID 설정
   };
-
+  const [total, setTotal] = useState(0);
+  const [searchParams] = useSearchParams();
+  const [totalPage, setTotalPage] = useState(0); // 총 페이지 수
+  console.log(total);
+  console.log(totalPage);
   useEffect(() => {
+    const page = searchParams.get("page");
     const getUsers = async () => {
       try {
         const accessToken = localStorage.getItem("accessToken");
         const { data } = await axios.get(
-          "http://localhost:3001/api/admin/users",
+          `http://localhost:${
+            process.env.REACT_APP_SERVER_PORT || 3000
+          }/api/admin/users?page=${page || 1}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -75,6 +85,8 @@ const AdminUsers = () => {
           }
         );
         setUsers(data.data);
+        setTotal(data.total);
+        setTotalPage(Math.ceil(data.total / 5));
         setError(""); // 에러 상태를 초기화합니다.
       } catch (err) {
         // 에러 처리 로직
@@ -89,13 +101,14 @@ const AdminUsers = () => {
   const handleDelete = async () => {
     if (selectedUserId === null) return;
     await axios
-      .delete(`http://localhost:3001/api/admin/users/${selectedUserId}`, {
+      .delete( `http://localhost:${
+        process.env.REACT_APP_SERVER_PORT || 3000
+      }/api/admin/users/${selectedUserId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       })
       .then((res) => {
-        console.log(res);
         setShow(false);
         window.location.reload();
       })
@@ -105,6 +118,33 @@ const AdminUsers = () => {
 
     setShow(false);
   };
+  const changePage = async (page: number) => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const { data } = await axios.get(
+        `http://localhost:${
+          process.env.REACT_APP_SERVER_PORT || 3000
+        }/api/admin/users?page=${page || 1}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          withCredentials: true,
+        }
+      );
+      setUsers(data.data);
+      setTotal(data.total);
+      setTotalPage(Math.ceil(data.total / 5));
+      setError(""); // 에러 상태를 초기화합니다.
+    } catch (err) {
+      // 에러 처리 로직
+      setError("사용자 정보를 불러오는데 실패했습니다.");
+      console.error(err);
+      // 추가적으로, err 객체에 따라 더 세부적인 에러 정보를 setError에 제공할 수 있습니다.
+    }
+  };
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   return (
     <AdminLayout>
@@ -142,7 +182,6 @@ const AdminUsers = () => {
                     </Button>
                   </Modal.Footer>
                 </Modal>
-                {/* <button onClick={handleDelete}>❌</button> */}
               </td>
               <td>{aUser.email}</td>
               <td>{aUser.name}</td>
@@ -153,6 +192,14 @@ const AdminUsers = () => {
           ))}
         </TableBody>
       </Table>
+      <Pagination
+        defaultCurrent={currentPage} // 현재 클릭한 페이지
+        total={total} // 데이터 총 개수
+        defaultPageSize={5} // 페이지 당 데이터 개수
+        onChange={(value) => {
+          changePage(value);
+        }}
+      />
     </AdminLayout>
   );
 };

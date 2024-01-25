@@ -37,7 +37,9 @@ const Team = () => {
     // 구단주 체크를 수행하는 함수
     const checkIfIsCreator = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/api/match/creator", {
+        const response = await axios.get(`http://localhost:${
+          process.env.REACT_APP_SERVER_PORT || 3000
+        }/api/match/creator`, {
           headers: {
             Authorization: `Bearer ${accessToken}` // Bearer 토큰 추가
           }
@@ -64,6 +66,8 @@ const Team = () => {
       <div>Team</div>
       <p>일단 팀이 없으면 여기로 못들어옴</p>
       <p>본인이 속해있는 팀 정보가 나와야함</p>
+      <Button onClick={() => navigate("/match/calendar")}>경기 일정</Button>
+      <br/>
       {/* 데이터 로딩 중이면 로딩 메시지를 표시 */}
       {loading ? (
         <p>Loading...</p>
