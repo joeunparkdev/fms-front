@@ -27,6 +27,7 @@ import MatchCalendar from 'pages/match/calendar';
 import Formation from 'pages/match/formation';
 import CreateTeam from 'pages/CreateTeam';
 import MemberDetail from 'pages/memberDetail';
+import PlayerStatistics from 'pages/playerStat';
 
 interface ProtectedRouteProps {
     children: ReactNode;
@@ -94,8 +95,8 @@ const App = () => {
                     {/* 어드민 용 페이지 */}
                     <Route path="/admin/users" element={<AdminUsers />} />
                     <Route path="/admin/teams" element={<AdminTeams />} />
+                    <Route path="/playerStat" element={<PlayerStatistics/>} />
 
-                    
                     <Route path="/teamTable" element={<TeamTable />} />
                     <Route path="/memberTable" element={<MemberTable />} />
                     {/* <Route path="/formation " element={<Formation />} /> */}
