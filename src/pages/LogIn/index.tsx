@@ -15,6 +15,8 @@ import { useTokenStore } from "store/tokenStore";
 import useAuthStore from "store/useAuthStore";
 import { Alert, Button, Form, Input } from "antd";
 import { set } from "date-fns";
+import { basicAxios } from "utils/axios";
+import constructWithOptions from "styled-components/dist/constructors/constructWithOptions";
 
 const LogIn = () => {
   const { accessToken } = useTokenStore();
@@ -37,19 +39,8 @@ const LogIn = () => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `http://localhost:${
-          process.env.REACT_APP_SERVER_PORT || 3000
-        }/api/auth/sign-in`,
-        {
-          email,
-          password,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-
+      const res = await basicAxios.post("/auth/sign-in", { email, password });
+      console.log(res.data.data.accessToken);
       localStorage.setItem("accessToken", res.data.data.accessToken);
       localStorage.setItem("refreshToken", res.data.data.refreshToken);
       login();
@@ -72,10 +63,7 @@ const LogIn = () => {
   const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
   const onKakaoLoginClick = async () => {
-
-      window.location.href = kakaoURL;
-
-    
+    window.location.href = kakaoURL;
   };
 
   return (
@@ -135,7 +123,8 @@ const LogIn = () => {
           </LinkContainer>
           <div
             className="ms-auto"
-            style={{ cursor: "pointer", width: "50%", padding: 0 }}>
+            style={{ cursor: "pointer", width: "50%", padding: 0 }}
+          >
             <img
               src="img/kakao_login_image.png"
               alt="카카오 로그인"

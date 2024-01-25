@@ -6,6 +6,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useSearchParams } from "react-router-dom";
 import { Pagination } from "antd";
+import { authAxios } from "utils/axios";
 
 const Table = styled.table`
   width: 100%;
@@ -95,17 +96,8 @@ const AdminUsers = () => {
     const page = searchParams.get("page");
     const getUsers = async () => {
       try {
-        const accessToken = localStorage.getItem("accessToken");
-        const { data } = await axios.get(
-          `http://localhost:${
-            process.env.REACT_APP_SERVER_PORT || 3000
-          }/api/admin/users?page=${page || 1}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-            withCredentials: true,
-          }
+        const { data } = await authAxios.get(
+          `/api/admin/users?page=${page || 1}`
         );
         setUsers(data.data); // 받아온 데이터 저징
         setTotal(data.total); // 전체 개수 저장
@@ -121,17 +113,8 @@ const AdminUsers = () => {
 
   const changePage = async (page: number) => {
     try {
-      const accessToken = localStorage.getItem("accessToken");
-      const { data } = await axios.get(
-        `http://localhost:${
-          process.env.REACT_APP_SERVER_PORT || 3000
-        }/api/admin/users?page=${page || 1}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          withCredentials: true,
-        }
+      const { data } = await authAxios.get(
+        `/api/admin/users?page=${page || 1}`
       );
       setUsers(data.data); // 받아온 데이터를 전역상태에 저장
       setTotal(data.total); // 페이지네이션하면 전체 데이터 개수 주니까 이건 state에 저장
