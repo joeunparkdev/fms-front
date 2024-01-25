@@ -26,6 +26,8 @@ import MatchReview from 'pages/MatchReview';
 import MatchCalendar from 'pages/match/calendar';
 import Formation from 'pages/match/formation';
 import CreateTeam from 'pages/CreateTeam';
+import MemberDetail from 'pages/memberDetail';
+import PlayerStatistics from 'pages/playerStat';
 
 interface ProtectedRouteProps {
     children: ReactNode;
@@ -33,6 +35,7 @@ interface ProtectedRouteProps {
 
 const App = () => {
     const { isLoggedIn } = useAuthStore();
+   // const {isStaff} = useAuthStore();
     const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         const navigate = useNavigate();
 
@@ -78,7 +81,7 @@ const App = () => {
                     <Route path="/profile/:userId/edit" element={<EditProfile />} />
                     <Route path="/profile/:userId" element={<Profile />} />
                     <Route path="/profile/:userId/register" element={<RegisterProfile />} />
-
+                    <Route path="/memberDetail" element={<MemberDetail />} />
                     {/* <Route path="/api/auth/kakao/callback" element={<KakaoCallback />} /> */}
                     <Route path="/match" element={<Match />} />
                     <Route path="/match/:matchId/result" element={<MatchResult />} />
@@ -93,6 +96,8 @@ const App = () => {
                     {/* 어드민 용 페이지 */}
                     <Route path="/admin/users" element={<AdminUsers />} />
                     <Route path="/admin/teams" element={<AdminTeams />} />
+                    <Route path="/playerStat" element={<PlayerStatistics/>} />
+
                     <Route path="/teamTable" element={<TeamTable />} />
                     <Route path="/memberTable" element={<MemberTable />} />
                     {/* <Route path="/formation " element={<Formation />} /> */}
