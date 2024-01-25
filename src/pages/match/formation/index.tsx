@@ -1,21 +1,17 @@
 import Layout from "layouts/App";
 import styled from 'styled-components';
-import React, { useEffect,useState } from "react";
+import React, { useEffect,useRef,useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css'; // 날짜 선택기 스타일
-import { ko } from 'date-fns/locale';
 import Dropdown from 'react-bootstrap/Dropdown';
-import CustomDropdown from '../../../components/CustomDropdown';
-import Alert from 'react-bootstrap/Alert';
-import DraggableCircle from "components/DraggableCircle";
+import Draggable from 'react-draggable';
+import formations from "./formations"; 
 
 
 const responsiveWidth = '768px'; 
 
 const Sidebar = styled.div`
-    width: 100%;
+    width: 58%;
     background: #f8f9fa;
     padding: 20px;
     border-radius: 10px;
@@ -39,28 +35,6 @@ const TripleContainer = styled.div`
     }
 `;
 
-// 모든 자식 요소를 가운데 정렬하는 컨테이너 컴포넌트
-const CenteredContainer = styled.div`
-  display: flex;
-  justify-content: center; // 가로 방향 중앙 정렬
-  width: 100%; // 부모 컨테이너 너비에 맞춤
-`;
-
-
-const ImageContainer = styled.div`
-  position: relative;
-  height: auto; 
-`;
-
-
-const Image = styled.img`
-  width: 55.5%;
-
-  @media (max-width: ${responsiveWidth}) {
-    width: 40%; // 화면이 작아지면 너비를 100%로 설정하여 가로로 꽉 차게 합니다.
-  }
-`;
-
 const ReservationInfo = styled.div`
   padding: 20px;
   border-radius: 10px;
@@ -74,47 +48,6 @@ const ReservationTitle = styled.h2`
   margin-bottom: 20px; // 타이틀과 리스트 사이의 여백
   color: black;
 `;
-
-// TimeSlot 컴포넌트의 props 타입 정의
-interface TimeSlotProps {
-    selected: boolean;
-  }
-
-
-const TimeSlot = styled.div<TimeSlotProps>`
-  padding: 13px;
-  margin-bottom: 8px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: ${props => props.selected ? '#32cd32' : 'transparent'};
-  color: ${props => props.selected ? 'white' : 'black'};
-  transform: ${props => props.selected ? 'scale(1.02)' : 'none'};
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  p {
-    font-size: 20px;
-  }
-
-  &.available {
-    border-color: green;
-  }
-
-  &.unavailable {
-    background-color: #f0f0f0;
-    cursor: not-allowed;
-  }
-
-  &.available:hover {
-    cursor: pointer;
-    transform: scale(1.02);
-  }
-`;
-
-
 
 const Button = styled.button`
   padding: 15px 25px; // 이 부분은 버튼의 크기를 조절하기 위해 변경할 수 있습니다.
@@ -133,6 +66,19 @@ const ButtonContainer = styled.div`
   justify-content: space-between; // 버튼들 사이에 공간을 균등하게 배분합니다.
   gap: 10px;
   padding-top: 3vh; // 버튼과 예약 정보 사이의 간격
+`;
+
+const ImageContainer = styled.div`
+  position: relative;
+  height: 67vh;
+  background-image: url('../../img/field.png'); // 배경 이미지로 경기장 이미지를 설정합니다.
+  background-size: cover; // 배경 이미지가 컨테이너를 꽉 채우도록 합니다.
+  background-position: center; // 배경 이미지를 중앙에 위치시킵니다.
+  width: 100%; // 경기장 이미지의 너비를 설정합니다. 필요에 따라 조정하세요.
+
+  @media (max-width: ${responsiveWidth}) {
+    width: 100%; // 화면이 작아지면 너비를 100%로 설정하여 가로로 꽉 차게 합니다.
+  }
 `;
 
 
@@ -155,7 +101,6 @@ const Formation = () => {
   const [homeTeamId, setHomeTeamId] = useState<string>('');
 
   const location = useLocation();
-  const { fieldId, fieldName, locationId, imageUrl, address,phone } = location.state || {};
 
   const accessToken = localStorage.getItem("accessToken");
 
@@ -180,152 +125,129 @@ const Formation = () => {
     checkIfIsCreator(); // 데이터를 불러오는 함수 호출
   }, []);
 
+    const Player = styled.div`
+    position: absolute;
+    width: 80px; // 선수 크기
+    height: 80px;
+    background-color: red;
+    border-radius: 50%; // 원 모양
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem; // 텍스트 크기
+    color: white; // 텍스트 색상
+  `;
 
+  // 이미지의 ref를 생성합니다.
+  const fieldRef = useRef<HTMLImageElement>(null);
+  
+  // 드래그 가능한 경계를 설정하는 state입니다.
+  const [bounds, setBounds] = useState({ left: 0, top: 0, right: 0, bottom: 0 });
 
-  /*********  달력  **********/
-
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   useEffect(() => {
-    const today = new Date();
-    handleDateChange(today);
-  }, []);
-
-  // 이전 날짜를 비활성화하기 위한 함수
-  const isPastDate = (date:Date) => {
-    // '오늘 날짜'의 시작부터 비교하려면 오늘 날짜를 0시 0분 0초로 설정해야 합니다.
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // 오늘 날짜의 시작으로 설정
-    
-    // date가 '오늘 날짜의 시작'과 같거나 이후이면 false를 반환 (활성화)
-    return date < today;
-  };  
-
-  // 날짜를 선택했을 때 예약 정보를 조회하는 함수
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
-    setSelectedTime(null);
-    if (date) {
-      // 예약 정보를 조회하는 API 호출 (예시)
-      fetchReservations(date);
-    }
-  };
+    // 이미지 로드 완료 시 경계값 계산
 
 
-  /*********  예약정보(예약 시간대별 리스트)  **********/
-
-  // 예약 정보의 타입을 정의
-  type Reservation = {
-    time: string;
-    status: string;
-  };
-
-  // 선택된 날짜의 예약 정보를 관리하는 상태
-  const [reservations, setReservations] = useState<Reservation[]>([]);
-
-  // 예약 시간을 선택하는 함수입니다.
-  const handleTimeSelect = (reservation: Reservation) => {
-
-      // 예약 가능한 상태가 아닌 경우 함수 종료
-      if (reservation.status !== '예약 가능') {
-        return;
-      }
-
-      if (selectedTime === reservation.time) {
-          setSelectedTime(null); // 이미 선택된 시간을 다시 클릭하면 선택 취소
-      } else {
-          setSelectedTime(reservation.time); // 새로운 시간을 선택
-      }
-  };
-
-  // 예약 정보를 조회하는 API 호출
-  const fetchReservations = (date: Date) => {
-    
-      const findAvailableTimes = async () => {
-          try {
-            const formattedDate = date.toISOString().split('T')[0]; // 날짜를 'YYYY-MM-DD' 형식으로 포맷팅
-            
-            const response = await axios.get(`http://localhost:3001/api/match/timeslots/${formattedDate}/${locationId}`, {
-              headers: {
-                Authorization: `Bearer ${accessToken}` // Bearer 토큰 추가
-              }
-            });
-            const fieldData: Reservation[] = response.data.data;
-            let resultData = fieldData.map((item: Reservation) => ({
-              time: item.time,
-              status: item.status
-            }));
-
-            setReservations(resultData);
-          } catch (error) {
-            console.error("데이터 불러오기 실패:", error);
-          }
-        };
-      
-        findAvailableTimes(); // 데이터를 불러오는 함수 호출   
-    
-  };
-
-
-
-  /*********  경기 요청 (버튼)  **********/
-  const handleSaveButtonClick = () => {
-    // 경기 일자 선택되지 않았을 경우 경고 메시지 표시
-    if (!selectedDate) {
-      alert('경기 일자를 입력해주세요');
-      return;
+    if (fieldRef.current) {
+      // 이미 로드된 이미지라면 바로 경계값 업데이트
+      updateBounds();
     }
 
-    // 경기 일자 선택되지 않았을 경우 경고 메시지 표시
-    if (!selectedTime) {
-      alert('경기 시간을 입력해주세요');
-      return;
+    // 이미지 로드 이벤트 리스너 등록
+    const imageElement = fieldRef.current;
+    if (imageElement) {
+      imageElement.addEventListener('load', updateBounds);
     }
 
-
-    const sendMatchMessage = async () => {
-      try {
-
-        await axios.post("http://localhost:3001/api/match/book", {
-          date: selectedDate.toISOString().split('T')[0],
-          time: selectedTime ? selectedTime : '시간 미선택',
-          homeTeamId,
-          awayTeamId: 1,
-          fieldId: locationId
-        }, {
-          headers: {
-            Authorization: `Bearer ${accessToken}` // Bearer 토큰 추가
-          }
-        });
-
-        // API 호출 성공 시
-        alert("상대팀 구단주에게 수락 요청 이메일을 보냈습니다.");
-        navigate("/home"); // 여기서 "/home"은 홈 페이지의 경로입니다.
-
-      } catch (error) {
-        console.error("데이터 불러오기 실패:", error);
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      if (imageElement) {
+        imageElement.removeEventListener('load', updateBounds);
       }
     };
-    //sendMatchMessage(); 
-    // confirm 대화 상자를 사용하여 사용자 확인 요청
-    if (window.confirm(` ${selectedDate.toISOString().split('T')[0]} ${selectedTime ? selectedTime : '시간 미선택'}자 경기 요청하시겠습니까?`)) {
-      // 사용자가 '확인'을 누르면, 경기 요청 메시지를 보내는 함수 호출
-      sendMatchMessage();
-    }
+  }, []);
 
-  };
+  // ImageContainer의 참조를 생성합니다.
+    const imageContainerRef = useRef<HTMLImageElement>(null);
+
+    // 경계값을 계산하는 함수를 수정합니다.
+    const updateBounds = () => {
+    if (imageContainerRef.current) {
+        const rect = imageContainerRef.current.getBoundingClientRect();
+        setBounds({
+        left: rect.left,
+        top: rect.top,
+        right: rect.width,
+        bottom: rect.height,
+        });
+    }
+    };
+
+    // 현재 선택된 포메이션을 상태로 관리
+    const [currentFormation, setCurrentFormation] = useState('4-3-3');
+
+    // 콤보박스에서 선택된 포메이션에 따라 Player 컴포넌트를 렌더링하는 함수
+    const renderFormation = (formationName:string) => {
+        const formationData = formations[formationName];
+        return (
+        <>
+            {formationData.attackers.map((pos, index) => (
+            <Draggable bounds={bounds} key={`attacker-${index}`}>
+                <Player style={{ left: pos.x, top: pos.y }}>
+                {formationData.positionNames.attackers[index]}
+                </Player>
+            </Draggable>
+            ))}
+            {formationData.midfielders.map((pos, index) => (
+            <Draggable bounds={bounds} key={`midfielder-${index}`}>
+                <Player style={{ left: pos.x, top: pos.y }}>
+                {formationData.positionNames.midfielders[index]}
+                </Player>
+            </Draggable>
+            ))}
+            {formationData.defenders.map((pos, index) => (
+            <Draggable bounds={bounds} key={`defender-${index}`}>
+                <Player style={{ left: pos.x, top: pos.y }}>
+                {formationData.positionNames.defenders[index]}
+                </Player>
+            </Draggable>
+            ))}
+            <Draggable bounds={bounds} key="goalkeeper">
+                <Player style={{ left: formationData.goalkeeper.x, top: formationData.goalkeeper.y }}>
+                {formationData.positionNames.goalkeeper}
+                </Player>
+            </Draggable>
+            {/* 중앙 미드필더, 공격수, 골키퍼 렌더링도 동일한 방식으로 추가... */}
+        </>
+        );
+    };
 
   return (
     <Layout>
     <TripleContainer>
       <div>
         <Sidebar>
-            <ImageContainer>
-            <Image src='../../img/field.png' alt="경기장 사진" />
-                <DraggableCircle bounds="parent" />
-                <DraggableCircle bounds="parent" />
-                <DraggableCircle bounds="parent" />
-            </ImageContainer>
+            {/* 콤보박스 렌더링 */}
+            <Dropdown>
+            <Dropdown.Toggle variant="success" id="dropdown-basic">
+                포메이션 선택 <span>{currentFormation}</span>
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+                {Object.keys(formations).map(formationName => (
+                <Dropdown.Item
+                    key={formationName}
+                    onClick={() => setCurrentFormation(formationName)}
+                >
+                    {formationName}
+                </Dropdown.Item>
+                ))}
+            </Dropdown.Menu>
+            </Dropdown>
+          <ImageContainer ref={imageContainerRef}>
+            {/* 선택된 포메이션 렌더링 */}
+            {renderFormation(currentFormation)}
+          </ImageContainer>
         </Sidebar>
       </div>
       <div>
@@ -333,27 +255,13 @@ const Formation = () => {
             {selectedDate && (
                 <>
                 <ReservationTitle>
-                    {selectedDate.toLocaleDateString('ko-KR')} 예약 정보
+                  예약 정보
                 </ReservationTitle>
-                {reservations.length > 0 ? (
-                reservations.map((reservation, index) => (
-                    <TimeSlot key={index} 
-                              className={reservation.status === '예약 가능' ? 'available' : 'unavailable'}
-                              onClick={() => handleTimeSelect(reservation)}
-                              selected={selectedTime === reservation.time}>
-                    <p>
-                        <b>{reservation.time}</b> - {reservation.status}
-                    </p>
-                    </TimeSlot>
-                ))
-                ) : (
-                <p>예약 정보가 없습니다.</p>
-                )}
                 </>
             )}
         <ButtonContainer>
         <CancelButton onClick={() => navigate("/match")}>취소</CancelButton>
-        <SaveButton onClick={handleSaveButtonClick}>경기 요청</SaveButton>
+        <SaveButton>경기 요청</SaveButton>
         </ButtonContainer>
         </ReservationInfo>
 
