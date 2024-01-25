@@ -49,6 +49,7 @@ const ProfileTable = () => {
             process.env.REACT_APP_SERVER_PORT || 3000
           }/api/profile?page=1`
         );
+        console.log("profileDatas=",profileDatas);
         setProfiles(profileDatas);
         setTotal(total);
       } catch (error) {
