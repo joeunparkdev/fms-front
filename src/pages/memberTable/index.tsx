@@ -40,17 +40,13 @@ const ProfileTable = () => {
   useEffect(() => {
     async function fetchProfiles() {
       try {
-        const {
-          data: {
-            data: { total, data: profileDatas },
-          },
-        } = await axios.get(
+        const response = await axios.get(
           `http://localhost:${
             process.env.REACT_APP_SERVER_PORT || 3000
           }/api/profile?page=1`
         );
-        setProfiles(profileDatas);
-        setTotal(total);
+        setProfiles(response.data.data.data);
+        setTotal(response.data.data.total);
       } catch (error) {
         console.error("멤버 정보를 불러오는 데 실패했습니다.", error);
       }
@@ -79,6 +75,7 @@ const ProfileTable = () => {
           withCredentials: true,
         }
       );
+
       setProfiles(profileDatas);
       setTotal(total);
     } catch (error) {
@@ -141,10 +138,10 @@ const ProfileTable = () => {
                 <td>{profile.age}</td>
                 <td>{profile.gender}</td>
                 <td>
-                  {profile.user?.member[0].isStaff ? "스태프" : "일반 회원"}
+                  {profile.user.member[0]?.isStaff ? "스태프" : "일반 회원"}
                 </td>
-                {<td>{profile.user?.member[0].team.name}</td>}
-                {<td>{profile.user?.member[0].joinDate}</td>}
+                <td>{profile.user.member[0]?.team.name}</td>
+                <td>{profile.user.member[0]?.joinDate}</td>
                 <td>
                   <button onClick={() => handleInviteButton(profile)}>
                     초대
