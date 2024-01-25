@@ -443,7 +443,6 @@ const MatchBook = () => {
               time: item.time,
               status: item.status
             }));
-
             setReservations(resultData);
           } catch (error) {
             console.error("데이터 불러오기 실패:", error);
