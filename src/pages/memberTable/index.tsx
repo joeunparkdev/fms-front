@@ -3,6 +3,7 @@ import axios from "axios";
 import "./member.css";
 
 import { Pagination } from "antd";
+import Layout from "layouts/App";
 // Profile 정보의 타입을 정의
 interface Member {
   isStaff: boolean;
@@ -103,100 +104,72 @@ const ProfileTable = () => {
     setShowModal(false);
     setSelectedProfile(null);
   };
-  
-  const changePage = async (page: number) => {
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-      const { data } = await axios.get(
-        `http://localhost:${
-          process.env.REACT_APP_SERVER_PORT || 3000
-        }/api/profile?page=${page || 1}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          withCredentials: true,
-        }
-      );
-      setTotal(data.total);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
-  const [currentPage, setCurrentPage] = useState(1);
   return (
-    
     <Layout>
-    <div>
-      <h2>멤버 정보</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>이름</th>
-            <th>실력</th>
-            <th>몸무게</th>
-            <th>키</th>
-            <th>선호 포지션</th>
-            <th>사진</th>
-            <th>나이</th>
-            <th>성별</th>
-            <th>스태프 여부</th>
+      <div>
+        <h2>멤버 정보</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>이름</th>
+              <th>실력</th>
+              <th>몸무게</th>
+              <th>키</th>
+              <th>선호 포지션</th>
+              <th>사진</th>
+              <th>나이</th>
+              <th>성별</th>
+              <th>스태프 여부</th>
 
-            {<th>팀 이름</th>}
-            {<th>가입일</th>}
-            <th>신청</th>
-          </tr>
-        </thead>
-        <tbody>
-          {profiles.map((profile) => (
-            <tr key={profile.id}>
-              <td>{profile.id}</td>
-              <td>{profile.name}</td>
-              <td>{profile.skillLevel}</td>
-              <td>{profile.weight}</td>
-              <td>{profile.height}</td>
-              <td>{profile.preferredPosition}</td>
-              <td>{profile.image_url}</td>
-              <td>{profile.age}</td>
-              <td>{profile.gender}</td>
-              <td>{profile.user.member[0].isStaff ? "스태프" : "일반 회원"}</td>
-              {<td>{profile.user.member[0].team.name}</td>}
-              {<td>{profile.user.member[0].joinDate}</td>}
-              <td>
-                <button onClick={() => handleInviteButton(profile)}>
-                  초대
-                </button>
-              </td>
+              {<th>팀 이름</th>}
+              {<th>가입일</th>}
+              <th>신청</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <Pagination
-        defaultCurrent={currentPage} // 현재 클릭한 페이지
-        total={total} // 데이터 총 개수
-        defaultPageSize={5} // 페이지 당 데이터 개수
-        onChange={(value) => {
-          changePage(value);
-        }}
-      />
-      {showModal && selectedProfile && (
-        <div className="modal">
-          <p>{`${selectedProfile.name} 팀에 초대하시겠습니까?`}</p>
-          <button onClick={handleConfirmInvite}>확인</button>
-          <button onClick={handleCancelInvite}>취소</button>
-        </div>
-      )}
-    </div>
-    <Pagination
-        defaultCurrent={currentPage} // 현재 클릭한 페이지
-        total={total} // 데이터 총 개수
-        defaultPageSize={5} // 페이지 당 데이터 개수
-        onChange={(value) => {
-          changePage(value);
-        }}
-      />
+          </thead>
+          <tbody>
+            {profiles.map((profile) => (
+              <tr key={profile.id}>
+                <td>{profile.id}</td>
+                <td>{profile.name}</td>
+                <td>{profile.skillLevel}</td>
+                <td>{profile.weight}</td>
+                <td>{profile.height}</td>
+                <td>{profile.preferredPosition}</td>
+                <td>{profile.image_url}</td>
+                <td>{profile.age}</td>
+                <td>{profile.gender}</td>
+                <td>
+                  {profile.user?.member[0].isStaff ? "스태프" : "일반 회원"}
+                </td>
+                {<td>{profile.user?.member[0].team.name}</td>}
+                {<td>{profile.user?.member[0].joinDate}</td>}
+                <td>
+                  <button onClick={() => handleInviteButton(profile)}>
+                    초대
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <Pagination
+          defaultCurrent={currentPage} // 현재 클릭한 페이지
+          total={total} // 데이터 총 개수
+          defaultPageSize={5} // 페이지 당 데이터 개수
+          onChange={(value) => {
+            changePage(value);
+          }}
+        />
+        {showModal && selectedProfile && (
+          <div className="modal">
+            <p>{`${selectedProfile.name} 팀에 초대하시겠습니까?`}</p>
+            <button onClick={handleConfirmInvite}>확인</button>
+            <button onClick={handleCancelInvite}>취소</button>
+          </div>
+        )}
+      </div>
     </Layout>
   );
 };
