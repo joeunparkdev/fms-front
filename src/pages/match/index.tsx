@@ -126,6 +126,7 @@ const Match = () => {
         });
         const fieldData = response.data.data;
         console.log(`fieldData ${fieldData.data}`);
+        console.log(`http://localhost:${process.env.REACT_APP_SERVER_PORT || 3000}/api/match/field`);
         setField(fieldData); // creatorId가 존재하면 구단주로 간주
         setLoading(false); // 데이터 로딩 완료
       } catch (error) {
