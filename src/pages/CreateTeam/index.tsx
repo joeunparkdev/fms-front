@@ -9,6 +9,7 @@ import { Button } from 'react-bootstrap';
 import './create-team.css';
 import { useDaumPostcodePopup } from 'react-daum-postcode';
 import styled from 'styled-components';
+import axios from 'axios';
 
 export const ScoreboardContainer = styled.div`
     width: 100%;
@@ -43,8 +44,8 @@ const CreateTeam = () => {
         description: '',
     });
     const [selectedGender, setSelectedGender] = useState('');
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [selectedToggle, setSelectedToggle] = useState<boolean>();
+    const [selectedFile, setSelectedFile] = useState<File | null>();
+    const [selectedToggle, setSelectedToggle] = useState<boolean>(false);
 
     const open = useDaumPostcodePopup();
 
@@ -55,6 +56,7 @@ const CreateTeam = () => {
     // 주소 입력시 이벤트
     useEffect(() => {
         searchLocation(addressValues.roadAddress);
+        console.log(addressValues);
     }, [addressValues.roadAddress]);
 
     const searchLocation = (address: string) => {
@@ -123,9 +125,31 @@ const CreateTeam = () => {
         }
     };
 
-    const onClickAddButton = (e: React.MouseEvent<HTMLButtonElement>) => {
-        console.log(selectedToggle);
-        console.log(selectedGender);
+    const onClickAddButton = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append('name', teamInfo.name);
+        formData.append('description', teamInfo.description);
+        formData.append('gender', selectedGender);
+        formData.append('isMixedGender', selectedToggle.toString());
+        formData.append('postalCode', addressValues.postalCode);
+        formData.append('address', addressValues.roadAddress);
+        if (selectedFile) {
+            formData.append('file', selectedFile);
+        }
+
+        try {
+            const accessToken = localStorage.getItem('accessToken');
+            const response = await axios.post('http://localhost:3001/api/team', formData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            alert(response);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
