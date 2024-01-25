@@ -33,9 +33,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { data, error } = useSWR(
-    `http://localhost:${
-      process.env.REACT_APP_SERVER_PORT || 3000
-    }/api/users/me`,
+    "/users/me",
     fetcher
     // { dedupingInterval: 1000 * 60 * 60 * 24 }
   );
@@ -59,6 +57,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     logout();
     navigate("/login");
   };
+
+  // 요청을 보낼 때 에러가 있으면 로그아웃을 시켜야함
 
   // if (error) {
   //   logout();
