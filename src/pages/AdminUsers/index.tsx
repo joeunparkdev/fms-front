@@ -48,7 +48,7 @@ const AdminUsers = () => {
   const values = [true, "sm-down", "md-down", "lg-down", "xl-down", "xxl-down"];
   const [fullscreen, setFullscreen] = useState(true);
   const [show, setShow] = useState(false);
-  const [users, setUsers] = useState<User[]>([]);
+
   const [selectedUsers, setSelectedUsers] = useState<SelectedUsers>({});
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null); // 현재 선택된 사용자의 ID 추적
 
@@ -63,11 +63,34 @@ const AdminUsers = () => {
     setShow(true);
     setSelectedUserId(userId); // 선택된 사용자 ID 설정
   };
-  const [total, setTotal] = useState(0);
-  const [searchParams] = useSearchParams();
-  const [totalPage, setTotalPage] = useState(0); // 총 페이지 수
-  console.log(total);
-  console.log(totalPage);
+
+  const handleDelete = async () => {
+    if (selectedUserId === null) return;
+    await axios
+      .delete(
+        `http://localhost:${
+          process.env.REACT_APP_SERVER_PORT || 3000
+        }/api/admin/users/${selectedUserId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      )
+      .then((res) => {
+        setShow(false);
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    setShow(false);
+  };
+
+  const [users, setUsers] = useState<User[]>([]); // 사용자 목록을 저장할 상태
+  const [total, setTotal] = useState(0); // 총 데이터 개수
+  const [searchParams] = useSearchParams(); // URLSearchParams 객체
   useEffect(() => {
     const page = searchParams.get("page");
     const getUsers = async () => {
@@ -84,40 +107,18 @@ const AdminUsers = () => {
             withCredentials: true,
           }
         );
-        setUsers(data.data);
-        setTotal(data.total);
-        setTotalPage(Math.ceil(data.total / 5));
-        setError(""); // 에러 상태를 초기화합니다.
+        setUsers(data.data); // 받아온 데이터 저징
+        setTotal(data.total); // 전체 개수 저장
+        setError(""); // 에러 상태를 초기화
       } catch (err) {
         // 에러 처리 로직
         setError("사용자 정보를 불러오는데 실패했습니다.");
         console.error(err);
-        // 추가적으로, err 객체에 따라 더 세부적인 에러 정보를 setError에 제공할 수 있습니다.
       }
     };
     getUsers();
   }, []);
 
-  const handleDelete = async () => {
-    if (selectedUserId === null) return;
-    await axios
-      .delete( `http://localhost:${
-        process.env.REACT_APP_SERVER_PORT || 3000
-      }/api/admin/users/${selectedUserId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      })
-      .then((res) => {
-        setShow(false);
-        window.location.reload();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    setShow(false);
-  };
   const changePage = async (page: number) => {
     try {
       const accessToken = localStorage.getItem("accessToken");
@@ -132,9 +133,8 @@ const AdminUsers = () => {
           withCredentials: true,
         }
       );
-      setUsers(data.data);
-      setTotal(data.total);
-      setTotalPage(Math.ceil(data.total / 5));
+      setUsers(data.data); // 받아온 데이터를 전역상태에 저장
+      setTotal(data.total); // 페이지네이션하면 전체 데이터 개수 주니까 이건 state에 저장
       setError(""); // 에러 상태를 초기화합니다.
     } catch (err) {
       // 에러 처리 로직
@@ -195,7 +195,7 @@ const AdminUsers = () => {
       <Pagination
         defaultCurrent={currentPage} // 현재 클릭한 페이지
         total={total} // 데이터 총 개수
-        defaultPageSize={5} // 페이지 당 데이터 개수
+        defaultPageSize={10} // 페이지 당 데이터 개수
         onChange={(value) => {
           changePage(value);
         }}

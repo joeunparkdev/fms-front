@@ -223,6 +223,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     navigate("/login");
   };
 
+  if (error) {
+    logout();
+    navigate("/login");
+  }
+
   return (
     <PageContainer>
       <Menu>
