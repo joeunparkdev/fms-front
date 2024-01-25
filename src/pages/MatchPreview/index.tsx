@@ -1,17 +1,33 @@
-import React, { useState } from "react";
 import Layout from "layouts/App";
-
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   NextButton,
-  Score,
   ScoreboardContainer,
   TeamBadge,
   TeamLogo,
   TeamsContainer,
 } from "pages/MatchResult/styles";
-import { Typography } from "antd";
-const { Title } = Typography;
+import { Typography, Button, Flex } from "antd";
+const { Title, Text, Link } = Typography;
+
+const Data = {
+  home: {
+    name: "홈팀",
+    result: { L: 4, W: 12, D: 4 },
+    currentResult: "LWWWL",
+    goal: 14,
+  },
+  away: {
+    name: "어웨이팀",
+    result: {
+      L: 6,
+      W: 1,
+      D: 2,
+    },
+    currentResult: "LWWWW",
+    goal: 12,
+  },
+};
 
 const MatchPreview = () => {
   const { matchId } = useParams();
@@ -32,16 +48,58 @@ const MatchPreview = () => {
         <TeamsContainer>
           <TeamBadge>
             <TeamLogo src="" alt="홈 팀 로고 넣어야함" />
-            <div>홈 팀 정보 받아와서 이름 넣어야함</div>
+            <div>{Data.home.name}</div>
+            <Text type="secondary">
+              {Data.home.result.W}승 {Data.home.result.D}무 {Data.home.result.L}
+              패
+            </Text>
+            <br />
+            {Data.home.currentResult.split("").map((result) => {
+              let style = {};
+              if (result === "W") {
+                style = { color: "#91D0F1" };
+              } else if (result === "L") {
+                style = { color: "#BF9394" };
+              } else if (result === "D") {
+                style = { color: "#C6C2C1" };
+              }
+
+              return (
+                <Text type="secondary" style={style}>
+                  {result}
+                </Text>
+              );
+            })}
           </TeamBadge>
           <Title level={4}>vs</Title>
           <TeamBadge>
             {/* Replace with actual image paths */}
             <TeamLogo src="" alt="어웨이 팀 로고 넣어야함" />
-            <div>어웨이 팀 정보 받아와서 이름 넣어야함</div>
+            <div>{Data.away.name}</div>
+            <Text type="secondary">
+              {Data.away.result.W}승 {Data.away.result.D}무 {Data.away.result.L}
+              패
+            </Text>
+            <br />
+            {Data.away.currentResult.split("").map((result) => {
+              let style = {};
+              if (result === "W") {
+                style = { color: "#91D0F1" };
+              } else if (result === "L") {
+                style = { color: "#BF9394" };
+              } else if (result === "D") {
+                style = { color: "#C6C2C1" };
+              }
+
+              return (
+                <Text type="secondary" style={style}>
+                  {result}
+                </Text>
+              );
+            })}
           </TeamBadge>
         </TeamsContainer>
-        <NextButton onClick={handleNext}>경기 종료</NextButton>
+        <Button onClick={handleNext}>경기 종료</Button>
       </ScoreboardContainer>
     </Layout>
   );

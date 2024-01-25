@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./member.css";
-
+import { Pagination } from "antd";
 // Profile 정보의 타입을 정의
 interface Profile {
   id: number;
@@ -22,21 +22,25 @@ const ProfileTable = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     async function fetchProfiles() {
       try {
-        const response = await axios.get(
+        const {
+          data: {
+            data: { total, data: profileDatas },
+          },
+        } = await axios.get(
           `http://localhost:${
             process.env.REACT_APP_SERVER_PORT || 3000
-          }/api/profile`
+          }/api/profile?page=1`
         );
-        const profile = Array.isArray(response.data.data)
-          ? response.data.data.map((profile: Profile) => ({ ...profile }))
-          : [];
-        console.log(response);
-        console.log(profile);
-        setProfiles(profile);
+        // const profile = Array.isArray(response.data.data)
+        //   ? response.data.data.map((profile: Profile) => ({ ...profile }))
+        //   : [];
+        setProfiles(profileDatas);
+        setTotal(total);
       } catch (error) {
         console.error("멤버 정보를 불러오는 데 실패했습니다.", error);
       }
@@ -44,6 +48,33 @@ const ProfileTable = () => {
 
     fetchProfiles();
   }, []);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const changePage = async (page: number) => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+
+      const {
+        data: {
+          data: { total, data: profileDatas },
+        },
+      } = await axios.get(
+        `http://localhost:${
+          process.env.REACT_APP_SERVER_PORT || 3000
+        }/api/profile?page=${page || 1}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          withCredentials: true,
+        }
+      );
+      setProfiles(profileDatas);
+      setTotal(total);
+    } catch (error) {
+      console.error("멤버 정보를 불러오는 데 실패했습니다.", error);
+    }
+  };
 
   const handleInviteButton = (profile: Profile) => {
     console.log("Invite button clicked!");
@@ -103,7 +134,14 @@ const ProfileTable = () => {
           ))}
         </tbody>
       </table>
-
+      <Pagination
+        defaultCurrent={currentPage} // 현재 클릭한 페이지
+        total={total} // 데이터 총 개수
+        defaultPageSize={5} // 페이지 당 데이터 개수
+        onChange={(value) => {
+          changePage(value);
+        }}
+      />
       {showModal && selectedProfile && (
         <div className="modal">
           <p>{`${selectedProfile.name} 팀에 초대하시겠습니까?`}</p>
