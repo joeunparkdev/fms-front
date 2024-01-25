@@ -1,0 +1,14 @@
+/* CSS 파일 또는 스타일 시트에 추가 */
+.custom-switch {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.custom-switch .custom-control-label {
+    order: 1; /* 레이블을 왼쪽에 배치 */
+}
+
+.custom-switch .custom-control-input:checked ~ .custom-control-label::before {
+    right: 0; /* 스위치를 오른쪽에 배치 (선택한 경우) */
+}
