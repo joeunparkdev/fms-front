@@ -156,6 +156,7 @@ const RegisterProfile = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("clicked");
     const formData = new FormData();
 
     for (let key in profile) {
@@ -184,7 +185,7 @@ const RegisterProfile = () => {
 
     axios({
       method: "post",
-      url: `http://localhost:3000/api/profile/${userId}/register`,
+      url: `http://localhost:${process.env.REACT_APP_SERVER_PORT}/api/profile/`,
       data: value,
       headers: {
         Authorization: `Bearer ${accessToken}`,

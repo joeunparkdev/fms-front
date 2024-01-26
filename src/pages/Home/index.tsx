@@ -1,17 +1,9 @@
-import useSWR from "swr";
-import fetcher from "utils/fetcher";
 import Layout from "layouts/App";
 import { useTeamStore } from "store/teamStore";
 import CustomButton from "components/CustomButton";
 import { ErrorContainer, ErrorMessage } from "./styles";
 
 const Home = () => {
-  const { data, error } = useSWR(
-    `http://localhost:${
-      process.env.REACT_APP_SERVER_PORT || 3000
-    }/api/users/me`,
-    fetcher
-  );
   const { teamId } = useTeamStore();
 
   return (

@@ -29,40 +29,23 @@ const HigherAwayStatValue = styled(StatValue)`
   color: #0000ff;
 `;
 
-interface BarProps {
-  color: string;
-  width: number; // 여기서는 width를 백분율로 설정하기 때문에 number 타입을 사용합니다.
-}
-
 interface StatData {
   label: string;
   home: number;
   away: number;
 }
 
-const ComparisonBarChart = ({ data }: { data: StatData[] }) => {
+const CustomPreviewChart = ({ data }: { data: StatData[] }) => {
   return (
     <StatsContainer>
       {data.map((item, index) => (
         <>
           <Text strong>{item.label}</Text>
           <StatRow key={index}>
-            {item.home === item.away ? (
-              <>
-                <StatValue>{item.away}</StatValue>
-                <StatValue>{item.home}</StatValue>
-              </>
-            ) : item.home > item.away ? (
-              <>
-                <StatValue>{item.away}</StatValue>
-                <HigherHomeStatValue>{item.home}</HigherHomeStatValue>
-              </>
-            ) : (
-              <>
-                <HigherAwayStatValue>{item.away}</HigherAwayStatValue>
-                <StatValue>{item.home}</StatValue>
-              </>
-            )}
+            <>
+              <StatValue>{item.away}</StatValue>
+              <StatValue>{item.home}</StatValue>
+            </>
           </StatRow>
         </>
       ))}
@@ -70,4 +53,4 @@ const ComparisonBarChart = ({ data }: { data: StatData[] }) => {
   );
 };
 
-export default ComparisonBarChart;
+export default CustomPreviewChart;
