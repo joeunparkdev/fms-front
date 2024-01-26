@@ -106,18 +106,16 @@ const LogIn = () => {
               />
             </div>
           </Label>
-          {/* Apply the same styles to both buttons */}
           <Label>
             <StyledButton type="submit">로그인</StyledButton>
           </Label>
-          <LinkContainer className="CenterAlign">
+          <LinkContainer className="CenterAlign"> {/* Apply the CenterAlign class here */}
             아직 회원이 아니신가요?&nbsp;
             <Link to="/signup">회원가입 하러가기</Link>
           </LinkContainer>
-          {/* Apply the same styles to the Kakao login button container */}
           <div
-            className="ms-auto kakao-login-container"
-            style={{ cursor: "pointer", width: "100%" }}>
+            className="ms-auto"
+            style={{ cursor: "pointer", width: "100%"}}>
             <img
               src="img/kakao_login_image.png"
               alt="카카오 로그인"
@@ -130,6 +128,5 @@ const LogIn = () => {
     </Container>
   );
 };
-
 
 export default LogIn;

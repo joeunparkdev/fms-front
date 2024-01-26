@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -20,13 +20,17 @@ const SignUp = () => {
     name: "",
     password: "",
     passwordConfirm: "",
+    verificationCode: "",
   });
-  const { email, name, password, passwordConfirm } = inputs;
+  const { email, name, password, passwordConfirm, verificationCode } = inputs;
 
-  // Set an initial password strength message
   const [passwordStrengthMessage, setPasswordStrengthMessage] = useState(
     "비밀번호는 영문 알파벳 대,소문자, 숫자, 특수문자(!@#$%^&*)를 포함해서 8자리 이상으로 입력해야 합니다."
   );
+
+  const [verificationSent, setVerificationSent] = useState(false);
+  const [verificationTimer, setVerificationTimer] = useState<number | null>(null);
+  const [verificationTimeRemaining, setVerificationTimeRemaining] = useState(180);
 
   const isStrong = (password: string): boolean => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
@@ -40,7 +44,6 @@ const SignUp = () => {
       [name]: value,
     });
 
-    // Update password strength message
     const strengthMessage = isStrong(value)
       ? "강력한 비밀번호입니다."
       : "비밀번호는 영문 알파벳 대,소문자, 숫자, 특수문자(!@#$%^&*)를 포함해서 8자리 이상으로 입력해야 합니다.";
@@ -49,6 +52,11 @@ const SignUp = () => {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
+    if (verificationSent && !verificationCode) {
+      alert("인증 코드를 입력해주세요.");
+      return;
+    }
+
     if (password !== passwordConfirm) {
       alert("비밀번호가 일치하지 않습니다.");
       setInputs({
@@ -58,6 +66,7 @@ const SignUp = () => {
       });
       return;
     }
+
     try {
       const response = await axios.post(
         `http://localhost:${process.env.REACT_APP_SERVER_PORT || 3000}/api/auth/sign-up`,
@@ -66,6 +75,7 @@ const SignUp = () => {
           name,
           password,
           passwordConfirm,
+          verificationCode,
         },
         {
           withCredentials: true,
@@ -75,16 +85,38 @@ const SignUp = () => {
       console.log(response.data);
       navigate("/login");
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        alert(error.response?.data.message || "오류가 발생했습니다.");
-      } else if (error instanceof Error) {
-        alert(error.message);
-      } else {
-        alert("오류가 발생했습니다.");
-      }
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      console.error(error);
+    }
+  };
+
+  const sendVerificationCode = async () => {
+    alert("Verification code sent!");
+    setVerificationSent(true);
+  
+    // Set the verification timer
+    setVerificationTimer(setInterval(() => {
+      setVerificationTimeRemaining((prev) => Math.max(0, prev - 1));
+    }, 1000) as unknown as number);
+  };
+
+    useEffect(() => {
+      // Cleanup the timer when the component unmounts
+      return () => {
+        if (verificationTimer) {
+          clearInterval(verificationTimer);
+        }
+      };
+    }, [verificationTimer]);
+    
+
+  const verifyCode = () => {
+    // Your verification code logic here
+
+    // Reset verification state and timer
+    setVerificationSent(false);
+    setVerificationTimeRemaining(180);
+    if (verificationTimer) {
+      clearInterval(verificationTimer);
     }
   };
 
@@ -112,6 +144,11 @@ const SignUp = () => {
                 onChange={onChange}
               />
             </div>
+            {!verificationSent && (
+    <StyledButton type="button" onClick={sendVerificationCode}>
+      인증
+    </StyledButton>
+  )}
           </Label>
           <Label>
             <span>이름</span>
@@ -136,7 +173,6 @@ const SignUp = () => {
                 onChange={onChange}
               />
             </div>
-            {/* Initially display the password strength message */}
             <div style={{ fontSize: "12px", color: "gray" }}>
               {passwordStrengthMessage}
             </div>
@@ -153,18 +189,45 @@ const SignUp = () => {
               />
             </div>
           </Label>
-          <StyledButton type="submit">가입완료</StyledButton>
+          {verificationSent && (
+  <Label>
+    <span>인증 코드</span>
+    <div>
+      <StyledInput
+        type="text"
+        name="verificationCode"
+        placeholder="인증 코드"
+        value={verificationCode}
+        onChange={onChange}
+      />
+    </div>
+    <div>
+      <p>남은 시간: {Math.floor(verificationTimeRemaining / 60)}:{verificationTimeRemaining % 60}</p>
+    </div>
+    <StyledButton type="button" onClick={verifyCode}>
+      인증 확인
+    </StyledButton>
+  </Label>
+)}
+          {verificationSent ? (
+            <StyledButton type="submit">가입완료</StyledButton>
+          ) : (
+            <StyledButton type="button" onClick={sendVerificationCode}>
+              인증 코드 전송
+            </StyledButton>
+          )}
         </StyledForm>
-       <div
-            className="ms-auto kakao-login-container"
-            style={{ cursor: "pointer", width: "100%" }}>
-            <img
-              src="img/kakao_login_image.png"
-              alt="카카오 로그인"
-              style={{ cursor: "pointer", width: "100%" }}
-              onClick={onKakaoLoginClick}
-            />
-          </div>
+        <div
+          className="ms-auto kakao-login-container"
+          style={{ cursor: "pointer", width: "100%" }}
+        >
+          <img
+            src="img/kakao_login_image.png"
+            alt="카카오 로그인"
+            style={{ cursor: "pointer", width: "100%" }}
+            onClick={onKakaoLoginClick}
+          />
+        </div>
         <LinkContainer>
           이미 회원이신가요?&nbsp;
           <Link to="/login">로그인 하러가기</Link>

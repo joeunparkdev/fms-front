@@ -12,7 +12,7 @@ const KakaoSuccess = () => {
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
     const code = urlSearchParams.get("code");
-    console.log("code=",code);
+
     if (code) {
       axios
         .post(
@@ -26,8 +26,6 @@ const KakaoSuccess = () => {
           }
         )
         .then((response) => {
-          console.log("Kakao code verification response:", response.data);
-
           const { accessToken } = response.data;
 
           localStorage.setItem("accessToken", accessToken);
@@ -35,9 +33,7 @@ const KakaoSuccess = () => {
           navigate("/home", { replace: true });
         });
     }
-
   });
-
 
   return (
     <Layout>
