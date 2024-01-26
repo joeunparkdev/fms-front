@@ -3,6 +3,7 @@ import { create } from "zustand";
 // 사용자 정보에 대한 인터페이스를 정의합니다.
 interface MemberStore {
     isStaff: boolean;
+    
   // 사용자 정보를 설정하는 함수들입니다.
   setMember: (user: Omit<MemberStore, "setMember">) => void;
   clearMember: () => void; // 사용자 정보를 초기화합니다.
