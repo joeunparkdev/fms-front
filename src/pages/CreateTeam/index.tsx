@@ -141,7 +141,9 @@ const CreateTeam = () => {
 
         try {
             const accessToken = localStorage.getItem('accessToken');
-            const response = await axios.post('http://localhost:3001/api/team', formData, {
+            const response = await axios.post(`http://localhost:${
+                process.env.REACT_APP_SERVER_PORT || 3000
+              }/api/team`, formData, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },

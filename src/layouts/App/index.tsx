@@ -18,6 +18,7 @@ import {
   StyledLink,
 } from "./styles";
 import { Typography } from "antd";
+import { useMemberStore } from "store/memberStore";
 
 const { Title } = Typography;
 interface LayoutProps {
@@ -37,16 +38,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     fetcher
     // { dedupingInterval: 1000 * 60 * 60 * 24 }
   );
-  const { setTeamId } = useTeamStore();
+  const { setMember } = useMemberStore();
+  const { teamId, setTeamId } = useTeamStore();
   const { id: userId, setUser } = useUserStore();
   const { logout } = useAuthStore();
   const { setProfile, id: profileId, resetProfile } = useProfileStore();
   const navigate = useNavigate();
+
   useEffect(() => {
     if (data) {
       resetProfile();
       setUser(data.data);
-      setTeamId(data.data.teamId);
+      setTeamId(data.data.team.id);
+      // setMember(data.data.member[0].id);
+      //  console.log(data.data.member[0].id)
     }
     if (data?.data.profile) {
       setProfile(data.data.profile);
@@ -86,8 +91,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               profileId
                 ? `/profile/${profileId}`
                 : `/profile/${userId}/register`
-            }
-          >
+            }>
             MY PROFILE
           </StyledLink>
         </MenuItem>
@@ -95,8 +99,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           onClick={handleLogout}
           style={{
             color: "#445664",
-          }}
-        >
+          }}>
           LOGOUT
         </MenuItem>
       </Menu>
