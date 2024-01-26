@@ -68,12 +68,8 @@ const LogIn = () => {
 
   return (
     <Container>
-      {/* <div className="page-container"> */}
       <FormContainer>
-        {/* <div className="login-form"> */}
         <StyledForm onSubmit={onSubmit}>
-          {/* <form onSubmit={onSubmit}> */}
-          {/* <label id="email-label"> */}
           {errorMessage && (
             <Alert
               message="에러"
@@ -97,7 +93,6 @@ const LogIn = () => {
               />
             </div>
           </Label>
-          {/* </label> */}
           <Label>
             <span>비밀번호</span>
             <div>
@@ -111,36 +106,30 @@ const LogIn = () => {
               />
             </div>
           </Label>
-          <label id="password-label"></label>
+          {/* Apply the same styles to both buttons */}
           <Label>
             <StyledButton type="submit">로그인</StyledButton>
           </Label>
-
-          {/* </form> */}
-          <LinkContainer>
+          <LinkContainer className="CenterAlign">
             아직 회원이 아니신가요?&nbsp;
             <Link to="/signup">회원가입 하러가기</Link>
           </LinkContainer>
+          {/* Apply the same styles to the Kakao login button container */}
           <div
-            className="ms-auto"
-            style={{ cursor: "pointer", width: "50%", padding: 0 }}
-          >
+            className="ms-auto kakao-login-container"
+            style={{ cursor: "pointer", width: "100%" }}>
             <img
               src="img/kakao_login_image.png"
               alt="카카오 로그인"
-              width="100%"
-              style={{ cursor: "pointer" }}
+              style={{ cursor: "pointer", width: "100%" }}
               onClick={onKakaoLoginClick}
             />
           </div>
         </StyledForm>
-
-        {/* </div> */}
       </FormContainer>
-
-      {/* </div> */}
     </Container>
   );
 };
+
 
 export default LogIn;

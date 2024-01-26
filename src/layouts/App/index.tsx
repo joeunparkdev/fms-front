@@ -49,7 +49,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     if (data) {
       resetProfile();
       setUser(data.data);
-      setTeamId(data.data.team.id);
+      setTeamId(data.data.team?.id);
       // setMember(data.data.member[0].id);
       //  console.log(data.data.member[0].id)
     }

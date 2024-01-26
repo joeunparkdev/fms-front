@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import {
@@ -13,7 +13,6 @@ import {
   Title,
 } from "./styles";
 
-// SignUp component
 const SignUp = () => {
   const navigate = useNavigate();
   const [inputs, setInputs] = useState({
@@ -24,15 +23,31 @@ const SignUp = () => {
   });
   const { email, name, password, passwordConfirm } = inputs;
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Set an initial password strength message
+  const [passwordStrengthMessage, setPasswordStrengthMessage] = useState(
+    "비밀번호는 영문 알파벳 대,소문자, 숫자, 특수문자(!@#$%^&*)를 포함해서 8자리 이상으로 입력해야 합니다."
+  );
+
+  const isStrong = (password: string): boolean => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { value, name } = e.target;
     setInputs({
       ...inputs,
       [name]: value,
     });
+
+    // Update password strength message
+    const strengthMessage = isStrong(value)
+      ? "강력한 비밀번호입니다."
+      : "비밀번호는 영문 알파벳 대,소문자, 숫자, 특수문자(!@#$%^&*)를 포함해서 8자리 이상으로 입력해야 합니다.";
+    setPasswordStrengthMessage(strengthMessage);
   };
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (password !== passwordConfirm) {
       alert("비밀번호가 일치하지 않습니다.");
@@ -45,9 +60,7 @@ const SignUp = () => {
     }
     try {
       const response = await axios.post(
-        `http://localhost:${
-          process.env.REACT_APP_SERVER_PORT || 3000
-        }/api/auth/sign-up`,
+        `http://localhost:${process.env.REACT_APP_SERVER_PORT || 3000}/api/auth/sign-up`,
         {
           email,
           name,
@@ -61,20 +74,26 @@ const SignUp = () => {
       console.log(response);
       console.log(response.data);
       navigate("/login");
-    } catch (error: unknown) {
+    } catch (error) {
       if (axios.isAxiosError(error)) {
-        alert(error.response?.data.message || "An error occurred");
+        alert(error.response?.data.message || "오류가 발생했습니다.");
       } else if (error instanceof Error) {
-        // Handle generic error instances
         alert(error.message);
       } else {
-        // Handle cases where the caught error is not an Error instance
-        alert("An error occurred");
+        alert("오류가 발생했습니다.");
       }
       setTimeout(() => {
         window.location.reload();
       }, 2000);
     }
+  };
+
+  const CLIENT_ID = "87e81e12dd9ec54f482031c186a83318";
+  const REDIRECT_URI = "http://localhost:3000/api/auth/kakao/callback";
+  const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
+  const onKakaoLoginClick = async () => {
+    window.location.href = kakaoURL;
   };
 
   return (
@@ -117,6 +136,10 @@ const SignUp = () => {
                 onChange={onChange}
               />
             </div>
+            {/* Initially display the password strength message */}
+            <div style={{ fontSize: "12px", color: "gray" }}>
+              {passwordStrengthMessage}
+            </div>
           </Label>
           <Label>
             <span>비밀번호 확인</span>
@@ -132,6 +155,16 @@ const SignUp = () => {
           </Label>
           <StyledButton type="submit">가입완료</StyledButton>
         </StyledForm>
+       <div
+            className="ms-auto kakao-login-container"
+            style={{ cursor: "pointer", width: "100%" }}>
+            <img
+              src="img/kakao_login_image.png"
+              alt="카카오 로그인"
+              style={{ cursor: "pointer", width: "100%" }}
+              onClick={onKakaoLoginClick}
+            />
+          </div>
         <LinkContainer>
           이미 회원이신가요?&nbsp;
           <Link to="/login">로그인 하러가기</Link>
@@ -140,4 +173,5 @@ const SignUp = () => {
     </Container>
   );
 };
+
 export default SignUp;
