@@ -3,13 +3,13 @@ import InputBox from 'components/input/InputBox';
 import KakaoLocation from 'components/location/Location';
 import RadioLayout from 'components/radio/RadioLayout';
 import Toggle from 'components/toggle/Toggle';
-import Layout from 'layouts/App';
 import { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import './create-team.css';
 import { useDaumPostcodePopup } from 'react-daum-postcode';
 import styled from 'styled-components';
 import axios from 'axios';
+import Layout from 'layouts/App';
 
 export const ScoreboardContainer = styled.div`
     width: 100%;
@@ -141,6 +141,7 @@ const CreateTeam = () => {
 
         try {
             const accessToken = localStorage.getItem('accessToken');
+
             const response = await axios.post(`http://localhost:${
                 process.env.REACT_APP_SERVER_PORT || 3000
               }/api/team`, formData, {
@@ -148,6 +149,7 @@ const CreateTeam = () => {
                     Authorization: `Bearer ${accessToken}`,
                 },
             });
+
             alert(response);
         } catch (error) {
             console.log(error);
