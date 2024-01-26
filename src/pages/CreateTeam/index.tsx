@@ -10,23 +10,8 @@ import { useDaumPostcodePopup } from 'react-daum-postcode';
 import styled from 'styled-components';
 import axios from 'axios';
 import Layout from 'layouts/App';
-
-export const ScoreboardContainer = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    max-height: 90vh; /* Maximum height of the scoreboard container */
-    overflow-y: auto; /* Enable vertical scrolling */
-    :: -webkit-scrollbar {
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        display: none;
-    }
-`;
+import { useNavigate } from 'react-router-dom';
+import { Alert } from 'antd';
 
 const CreateTeam = () => {
     const { kakao } = window;
@@ -46,6 +31,8 @@ const CreateTeam = () => {
     const [selectedGender, setSelectedGender] = useState('');
     const [selectedFile, setSelectedFile] = useState<File | null>();
     const [selectedToggle, setSelectedToggle] = useState<boolean>(false);
+    const [validationMessage, setValidationMessage] = useState<string>('');
+    const navigate = useNavigate();
 
     const open = useDaumPostcodePopup();
 
@@ -128,6 +115,17 @@ const CreateTeam = () => {
     const onClickAddButton = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
+        if (
+            !teamInfo.name ||
+            !teamInfo.name ||
+            !selectedFile ||
+            !addressValues ||
+            !!addressValues.postalCode ||
+            !!addressValues.roadAddress
+        ) {
+            setValidationMessage('필수 입력값을 입력해주세요');
+        }
+
         const formData = new FormData();
         formData.append('name', teamInfo.name);
         formData.append('description', teamInfo.description);
@@ -142,15 +140,20 @@ const CreateTeam = () => {
         try {
             const accessToken = localStorage.getItem('accessToken');
 
-            const response = await axios.post(`http://localhost:${
-                process.env.REACT_APP_SERVER_PORT || 3000
-              }/api/team`, formData, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
+            const response = await axios.post(
+                `http://localhost:${process.env.REACT_APP_SERVER_PORT || 3000}/api/team`,
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
 
-            alert(response);
+            if (response.status === 201) {
+                alert('팀등록이 완료되었습니다.');
+                navigate('/home');
+            }
         } catch (error) {
             console.log(error);
         }
@@ -158,32 +161,41 @@ const CreateTeam = () => {
 
     return (
         <Layout>
-            <ScoreboardContainer>
-                {
-                    <form className="create-team-form">
-                        <FileUploader descLabel="구단 로고를 등록해주세요" changedFunc={handleFileChange} />
-                        <InputBox inputLabel="구단명" name="name" onChange={handleInputChange} />
-                        <InputBox inputLabel="구단 설명" name="description" onChange={handleInputChange} />
-                        <RadioLayout
-                            titleLabel={radioOption.titleLabel}
-                            option={radioOption.option}
-                            onChange={radioOption.onChange}
-                        />
-                        <Toggle label="혼성 여부" onToggle={(value) => setSelectedToggle(value)} />
+            {
+                <form className="create-team-form">
+                    {validationMessage && (
+                        <Alert
+                            message="에러"
+                            description={validationMessage}
+                            type="error"
+                            showIcon
+                            closable
+                            onClose={() => setValidationMessage('')}
+                        ></Alert>
+                    )}
+                    <FileUploader descLabel="구단 로고를 등록해주세요" changedFunc={handleFileChange} />
+                    <InputBox inputLabel="구단명" name="name" onChange={handleInputChange} />
+                    <InputBox inputLabel="구단 설명" name="description" onChange={handleInputChange} />
+                    <RadioLayout
+                        titleLabel={radioOption.titleLabel}
+                        option={radioOption.option}
+                        onChange={radioOption.onChange}
+                    />
+                    <Toggle label="혼성 여부" onToggle={(value) => setSelectedToggle(value)} />
 
-                        <div className="location-container">
-                            <label htmlFor="">연고지</label>
-                            <KakaoLocation center={addressValues.center} />
-                            <Button variant="dark" onClick={handleClick}>
-                                주소 검색
-                            </Button>
-                        </div>
-                        <Button variant="dark" onClick={onClickAddButton}>
-                            Add
+                    <div className="location-container">
+                        <label htmlFor="">연고지</label>
+                        <KakaoLocation center={addressValues.center} />
+                        <Button variant="dark" onClick={handleClick}>
+                            주소 검색
                         </Button>
-                    </form>
-                }
-            </ScoreboardContainer>
+                    </div>
+                    <Button variant="dark" onClick={onClickAddButton}>
+                        <div style={{ fontSize: '12px', color: 'gray' }}>{validationMessage}</div>
+                        Add
+                    </Button>
+                </form>
+            }
         </Layout>
     );
 };

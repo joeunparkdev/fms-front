@@ -5,6 +5,7 @@ import './team-detail.css';
 import DlText from 'components/text/DlText';
 import { Button, Card, CardGroup, Dropdown } from 'react-bootstrap';
 import styled from 'styled-components';
+import MyResponsivePie, { MyResponsivePieType } from 'components/graph/MyResponsePie';
 // import MyResponsivePie from 'components/graph/MyResponsePie';
 
 const TeamDetail = () => {
@@ -36,6 +37,23 @@ const TeamDetail = () => {
             display: none;
         }
     `;
+
+    const test: MyResponsivePieType = {
+        data: [
+            {
+                id: '승',
+                value: 10,
+            },
+            {
+                id: '무',
+                value: 2,
+            },
+            {
+                id: '패',
+                value: 3,
+            },
+        ],
+    };
 
     return (
         <Layout>
@@ -78,7 +96,10 @@ const TeamDetail = () => {
                 </Card>
                 <Card>
                     <TitleText title="통계" />
-                    {/* <MyResponsivePie /> */}
+                    <div className="team-info-graph">
+                        <MyResponsivePie data={test.data} />
+                        <MyResponsivePie data={test.data} />
+                    </div>
                 </Card>
                 <Card>
                     <TitleText title="탑 플레이어" />
