@@ -26,6 +26,7 @@ import MatchReview from 'pages/MatchReview';
 import MatchCalendar from 'pages/match/calendar';
 import Formation from 'pages/match/formation';
 import CreateTeam from 'pages/CreateTeam';
+import TeamDetail from 'pages/TeamDetail';
 
 interface ProtectedRouteProps {
     children: ReactNode;
@@ -72,6 +73,7 @@ const App = () => {
                     <Route path="/home" element={<Home />} />
                     <Route path="/team" element={<Team />} />
                     <Route path="/team/create" element={<CreateTeam />} />
+                    <Route path="/team/:teamId" element={<TeamDetail />} />
                     <Route path="/player" element={<Player />} />
                     <Route path="/strategy" element={<Strategy />} />
                     <Route path="/calendar" element={<Calendar />} />
