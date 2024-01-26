@@ -117,9 +117,6 @@ axios.interceptors.response.use(
     } else if (error.response.status === 400) {
       // 여기 바꿀 예정..
       console.log("팀이 없는듯?");
-      window.location.reload();
-    } else {
-      window.location.href = "/home";
     }
 
     // localStorage.clear();

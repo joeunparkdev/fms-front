@@ -46,11 +46,8 @@ type SelectedUsers = {
 };
 
 const AdminUsers = () => {
-  const values = [true, "sm-down", "md-down", "lg-down", "xl-down", "xxl-down"];
-  const [fullscreen, setFullscreen] = useState(true);
   const [show, setShow] = useState(false);
 
-  const [selectedUsers, setSelectedUsers] = useState<SelectedUsers>({});
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null); // 현재 선택된 사용자의 ID 추적
 
   const [error, setError] = useState<string>("");
@@ -96,9 +93,7 @@ const AdminUsers = () => {
     const page = searchParams.get("page");
     const getUsers = async () => {
       try {
-        const { data } = await authAxios.get(
-          `/api/admin/users?page=${page || 1}`
-        );
+        const { data } = await authAxios.get(`/admin/users?page=${page || 1}`);
         setUsers(data.data); // 받아온 데이터 저징
         setTotal(data.total); // 전체 개수 저장
         setError(""); // 에러 상태를 초기화
@@ -113,9 +108,7 @@ const AdminUsers = () => {
 
   const changePage = async (page: number) => {
     try {
-      const { data } = await authAxios.get(
-        `/api/admin/users?page=${page || 1}`
-      );
+      const { data } = await authAxios.get(`/admin/users?page=${page || 1}`);
       setUsers(data.data); // 받아온 데이터를 전역상태에 저장
       setTotal(data.total); // 페이지네이션하면 전체 데이터 개수 주니까 이건 state에 저장
       setError(""); // 에러 상태를 초기화합니다.
@@ -178,7 +171,7 @@ const AdminUsers = () => {
       <Pagination
         defaultCurrent={currentPage} // 현재 클릭한 페이지
         total={total} // 데이터 총 개수
-        defaultPageSize={10} // 페이지 당 데이터 개수
+        defaultPageSize={5} // 페이지 당 데이터 개수
         onChange={(value) => {
           changePage(value);
         }}

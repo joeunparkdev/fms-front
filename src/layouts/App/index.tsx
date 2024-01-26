@@ -77,29 +77,39 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <StyledLink to="/home">HOME</StyledLink>
         </MenuItem>
         <MenuItem>
-          <StyledLink to="/team">TEAM</StyledLink>
-        </MenuItem>
-        <MenuItem>
-          <StyledLink to="/player">PLAYER</StyledLink>
-        </MenuItem>
-        <MenuItem>
-          <StyledLink to="/strategy">STRATEGY</StyledLink>
-        </MenuItem>
-        <MenuItem>
           <StyledLink
             to={
               profileId
                 ? `/profile/${profileId}`
                 : `/profile/${userId}/register`
-            }>
+            }
+          >
             MY PROFILE
           </StyledLink>
         </MenuItem>
+
+        {teamId ? (
+          <>
+            <MenuItem>
+              <StyledLink to="/team">TEAM</StyledLink>
+            </MenuItem>
+            <MenuItem>
+              <StyledLink to="/player">PLAYER</StyledLink>
+            </MenuItem>
+            <MenuItem>
+              <StyledLink to="/strategy">STRATEGY</StyledLink>
+            </MenuItem>
+          </>
+        ) : (
+          <></>
+        )}
+
         <MenuItem
           onClick={handleLogout}
           style={{
             color: "#445664",
-          }}>
+          }}
+        >
           LOGOUT
         </MenuItem>
       </Menu>
