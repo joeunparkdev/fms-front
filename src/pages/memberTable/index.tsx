@@ -49,7 +49,7 @@ const ProfileTable = () => {
     try {
       let apiUrl = `http://localhost:${
         process.env.REACT_APP_SERVER_PORT || 3000
-      }/api/profile?page=1`;
+      }/api/profile/available?page=1`;
 
       // 검색어가 있는 경우 검색 쿼리 추가
       if (searchQuery.trim() !== "") {
@@ -62,7 +62,7 @@ const ProfileTable = () => {
         },
         withCredentials: true,
       });
-
+      console.log(response.data.data.data);
       setProfiles(response.data.data.data);
       setTotal(response.data.data.total);
     } catch (error) {
@@ -120,19 +120,20 @@ const ProfileTable = () => {
     setSelectedProfile(null); // 모달을 닫을 때 선택된 사용자 ID 초기화
   };
   const { teamId, setTeamId } = useTeamStore();
-  
+
   const handleConfirmInvite = async () => {
     try {
-
       // Make the API call to invite the selected profile to a team //멤버 스토어에서 가져올수있나?
 
       const response = await axios.post(
-        `http://localhost:${process.env.REACT_APP_SERVER_PORT || 3000}/api/team/${teamId}/user/${selectedProfile?.id}`
+        `http://localhost:${
+          process.env.REACT_APP_SERVER_PORT || 3000
+        }/api/team/${teamId}/user/${selectedProfile?.id}`
       );
-  
+
       // Handle the response, e.g., check for success and update UI accordingly
       console.log("Invitation API response:", response.data);
-  
+
       // Close the modal and reset selectedProfile
       setShowModal(false);
       setSelectedProfile(null);
@@ -141,7 +142,7 @@ const ProfileTable = () => {
       // Handle errors if needed
     }
   };
-  
+
   const handleCancelInvite = () => {
     setShowModal(false);
     setSelectedProfile(null);
@@ -167,34 +168,34 @@ const ProfileTable = () => {
   return (
     <Layout>
       <div>
-      {showModal && selectedProfile && (
-         <Modal show={show} onHide={handleClose}>
-         <Modal.Header closeButton>
-           <Modal.Title>초대 확인 메세지</Modal.Title>
-         </Modal.Header>
-         <Modal.Body>{`${selectedProfile?.name} 팀에 초대하시겠습니까?`}</Modal.Body>
-         <Modal.Footer>
-         <button onClick={handleConfirmInvite}>확인</button>
-        <button onClick={handleCancelInvite}>취소</button>
-         </Modal.Footer>
-       </Modal>
-      )};
+        {showModal && selectedProfile && (
+          <Modal show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>초대 확인 메세지</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>{`${selectedProfile?.name} 팀에 초대하시겠습니까?`}</Modal.Body>
+            <Modal.Footer>
+              <button onClick={handleConfirmInvite}>확인</button>
+              <button onClick={handleCancelInvite}>취소</button>
+            </Modal.Footer>
+          </Modal>
+        )}
         <h2>멤버 정보</h2>
         <div>
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="이름 검색"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === "Enter") {
-                fetchProfiles();
-              }
-            }}
-          />
-          <button onClick={handleSearchButtonClick}>검색</button>
-        </div>
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="이름 검색"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  fetchProfiles();
+                }
+              }}
+            />
+            <button onClick={handleSearchButtonClick}>검색</button>
+          </div>
         </div>
         <table>
           <thead>
@@ -251,8 +252,11 @@ const ProfileTable = () => {
                   {profile.user.member[0]?.isStaff ? "스태프" : "일반 회원"}
                 </td>
                 <td>{profile.user.member[0]?.team.name}</td>
-                <td>{new Date(profile.user.member[0]?.joinDate).toLocaleDateString()}</td>
-
+                <td>
+                  {new Date(
+                    profile.user.member[0]?.joinDate
+                  ).toLocaleDateString()}
+                </td>
 
                 <td>
                   <button onClick={() => handleInviteButton(profile)}>
@@ -275,7 +279,6 @@ const ProfileTable = () => {
             changePage(value);
           }}
         />
-       
       </div>
     </Layout>
   );
