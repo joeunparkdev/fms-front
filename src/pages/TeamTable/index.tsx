@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import "./table.css"
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "./table.css";
 
 import { Pagination } from "antd";
 import Layout from "layouts/App";
@@ -12,6 +12,8 @@ interface Team {
   logoImage: string;
   is_mixed_gender: boolean;
   gender: string;
+  team: Team;
+  totalMember: number;
 }
 
 const TeamTable = () => {
@@ -23,32 +25,48 @@ const TeamTable = () => {
   useEffect(() => {
     async function fetchTeams() {
       try {
-        const response = await axios.get(`http://localhost:${
-          process.env.REACT_APP_SERVER_PORT || 3000
-        }/api/team?page=1`);
-        setTeams(response.data);
+        const response = await axios.get(
+          `http://localhost:${
+            process.env.REACT_APP_SERVER_PORT || 3000
+          }/api/team?page=1`
+        );
+        setTeams(response.data.data);
         setTotal(response.data.total);
       } catch (error) {
-        console.error('팀 정보를 불러오는 데 실패했습니다.', error);
+        console.error("팀 정보를 불러오는 데 실패했습니다.", error);
       }
     }
 
     fetchTeams();
   }, []);
-
+  console.log("teams= ", teams);
   const [currentPage, setCurrentPage] = useState(1);
   const changePage = async (page: number) => {
     try {
       const accessToken = localStorage.getItem("accessToken");
 
-      const {
-        data: {
-          data: { total, data: profileDatas },
-        },
-      } = await axios.get(
+      // const {
+      //   data: {
+      //     data: { total, data: profileDatas },
+      //   },
+      // } = await axios.get(
+      //   `http://localhost:${
+      //     process.env.REACT_APP_SERVER_PORT || 3000
+      //   }/api/profile?page=${page || 1}`,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${accessToken}`,
+      //     },
+      //     withCredentials: true,
+      //   }
+      // );
+
+      // setTeams(profileDatas);
+      // setTotal(total);
+      const response = await axios.get(
         `http://localhost:${
           process.env.REACT_APP_SERVER_PORT || 3000
-        }/api/profile?page=${page || 1}`,
+        }/api/team?page=${page || 1}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -56,9 +74,8 @@ const TeamTable = () => {
           withCredentials: true,
         }
       );
-
-      setTeams(profileDatas);
-      setTotal(total);
+      setTeams(response.data.data);
+      setTotal(response.data.total);
     } catch (error) {
       console.error("멤버 정보를 불러오는 데 실패했습니다.", error);
     }
@@ -82,41 +99,55 @@ const TeamTable = () => {
     setSelectedTeam(null);
   };
 
+  teams.map((team) => {
+    console.log("team= ", team);
+    console.log("team.id= ", team.team.id);
+    console.log("team.name= ", team.team.name);
+    console.log("team.description= ", team.team.description);
+    console.log("team.logoImage= ", team.team.logoImage);
+    console.log("team.totalMember", team.totalMember);
+  });
+
   return (
     <Layout>
-    <div>
-      <h2>팀 정보</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>팀 이름</th>
-            <th>팀 설명</th>
-            <th>로고 이미지</th>
-            <th>혼성 여부</th>
-            <th>성별</th>
-            <th>신청</th>
-          </tr>
-        </thead>
-        <tbody>
-          {teams.map((team) => (
-            <tr key={team.id}>
-              <td>{team.id}</td>
-              <td>{team.name}</td>
-              <td>{team.description}</td>
-              <td>
-                <img src={team.logoImage} alt={`${team.name} 로고`} />
-              </td>
-              <td>{team.is_mixed_gender ? '혼성' : '단일 성별'}</td>
-              <td>{team.gender}</td>
-              <td>
-                <button onClick={() => handleApplyButton(team)}>신청</button>
-              </td>
+      <div>
+        <h2>팀 정보</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>팀 이름</th>
+              <th>팀 설명</th>
+              <th>로고 이미지</th>
+              <th>혼성 여부</th>
+              <th>성별</th>
+              <th>멤버수</th>
+              <th>신청</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <Pagination
+          </thead>
+          <tbody>
+            {teams.map((team) => (
+              <tr key={team.team.id}>
+                <td>{team.team.id}</td>
+                <td>{team.team.name}</td>
+                <td>{team.team.description}</td>
+                <td>
+                  <img
+                    src={team.team.logoImage}
+                    alt={`${team.team.name} 로고`}
+                  />
+                </td>
+                <td>{team.team.is_mixed_gender ? "혼성" : "단일 성별"}</td>
+                <td>{team.team.gender}</td>
+                <td>{team.totalMember}</td>
+                <td>
+                  <button onClick={() => handleApplyButton(team)}>신청</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <Pagination
           defaultCurrent={currentPage} // 현재 클릭한 페이지
           total={total} // 데이터 총 개수
           defaultPageSize={5} // 페이지 당 데이터 개수
