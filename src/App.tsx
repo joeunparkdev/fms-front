@@ -29,47 +29,47 @@ import CreateTeam from 'pages/CreateTeam';
 import TeamDetail from 'pages/TeamDetail';
 import MemberDetail from 'pages/memberDetail';
 import PlayerStatistics from 'pages/playerStat';
-
+        
 interface ProtectedRouteProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
 const App = () => {
-    const { isLoggedIn } = useAuthStore();
-    // const {isStaff} = useAuthStore();
-    const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-        const navigate = useNavigate();
+  const { isLoggedIn } = useAuthStore();
+  // const {isStaff} = useAuthStore();
+  const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+    const navigate = useNavigate();
 
-        useEffect(() => {
-            if (isLoggedIn) {
-                navigate('/home');
-            }
-        }, [isLoggedIn, navigate]);
+    useEffect(() => {
+      if (isLoggedIn) {
+        navigate("/home");
+      }
+    }, [isLoggedIn, navigate]);
 
-        return <>{children}</>;
-    };
+    return <>{children}</>;
+  };
 
-    return (
-        <Routes>
-            {/* 로그인 안해도 접근 가능한 url */}
+  return (
+    <Routes>
+      {/* 로그인 안해도 접근 가능한 url */}
 
-            <Route
-                path="/login"
-                element={
-                    <ProtectedRoute>
-                        <LogIn />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/signup"
-                element={
-                    <ProtectedRoute>
-                        <SignUp />
-                    </ProtectedRoute>
-                }
-            />
-            <Route path="/kakaoSuccess" element={<KakaoSuccess />} />
+      <Route
+        path="/login"
+        element={
+          <ProtectedRoute>
+            <LogIn />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/signup"
+        element={
+          <ProtectedRoute>
+            <SignUp />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/kakaoSuccess" element={<KakaoSuccess />} />
 
             {isLoggedIn ? (
                 <>
@@ -99,17 +99,16 @@ const App = () => {
                     <Route path="/admin/users" element={<AdminUsers />} />
                     <Route path="/admin/teams" element={<AdminTeams />} />
                     <Route path="/playerStat" element={<PlayerStatistics />} />
-
-                    <Route path="/teamTable" element={<TeamTable />} />
-                    <Route path="/memberTable" element={<MemberTable />} />
-                    {/* <Route path="/formation " element={<Formation />} /> */}
-                    {/* <Route path="/*" element={<NotFound />} /> */}
-                </>
-            ) : (
-                <Route path="/*" element={<Navigate replace to="/login" />} />
-            )}
-        </Routes>
-    );
+          <Route path="/teamTable" element={<TeamTable />} />
+          <Route path="/memberTable" element={<MemberTable />} />
+          {/* <Route path="/formation " element={<Formation />} /> */}
+          {/* <Route path="/*" element={<NotFound />} /> */}
+        </>
+      ) : (
+        <Route path="/*" element={<Navigate replace to="/login" />} />
+      )}
+    </Routes>
+  );
 };
 
 export default App;
