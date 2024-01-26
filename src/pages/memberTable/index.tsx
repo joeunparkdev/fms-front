@@ -5,6 +5,7 @@ import "./member.css";
 import { Pagination } from "antd";
 import Layout from "layouts/App";
 import Modal from "react-bootstrap/Modal";
+import { useTeamStore } from "store/teamStore";
 
 interface Member {
   isStaff: boolean;
@@ -118,13 +119,13 @@ const ProfileTable = () => {
     setShow(false);
     setSelectedProfile(null); // 모달을 닫을 때 선택된 사용자 ID 초기화
   };
-
+  const { teamId, setTeamId } = useTeamStore();
+  
   const handleConfirmInvite = async () => {
     try {
-      //TODO user's (member's) team id 
-      const teamId = 0; 
+
       // Make the API call to invite the selected profile to a team //멤버 스토어에서 가져올수있나?
-      
+
       const response = await axios.post(
         `http://localhost:${process.env.REACT_APP_SERVER_PORT || 3000}/api/team/${teamId}/user/${selectedProfile?.id}`
       );

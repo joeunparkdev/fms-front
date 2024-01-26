@@ -37,7 +37,9 @@ export const updateAccessToken = async () => {
   const refreshToken = localStorage.getItem("refreshToken");
 
   const { data } = await axios.post(
-    "http://localhost:3001/api/auth/refresh",
+    `http://localhost:${
+      process.env.REACT_APP_SERVER_PORT || 3000
+    }/api/auth/refresh`,
     {},
     {
       headers: {
@@ -90,7 +92,9 @@ axios.interceptors.response.use(
           "/api/auth/refresh",
           {},
           {
-            baseURL: "http://localhost:3001",
+            baseURL: `http://localhost:${
+              process.env.REACT_APP_SERVER_PORT || 3000
+            }`,
             headers: {
               Authorization: `Bearer ${refreshToken}`,
               "Content-type": "application/json",
