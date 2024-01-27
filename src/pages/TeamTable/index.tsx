@@ -27,27 +27,27 @@ const TeamTable: React.FC = () => {
 
   const fetchTeams = async (page: number = 1) => {
     try {
-    
-      let apiUrl =
-        `http://localhost:${
-          process.env.REACT_APP_SERVER_PORT || 3000
-        }/api/team/?page=${page}`;
+      let apiUrl = `http://localhost:${
+        process.env.REACT_APP_SERVER_PORT || 3000
+      }/api/team/?page=${page}`;
 
-    // 검색어가 있는 경우 검색 쿼리 추가
-    if (searchQuery.trim() !== "") {
-      apiUrl += `&name=${searchQuery}`;
-    }
-    const accessToken = localStorage.getItem("accessToken");
-    const response = await axios.get(apiUrl, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      withCredentials: true,
-    });
+      // 검색어가 있는 경우 검색 쿼리 추가
+      if (searchQuery.trim() !== "") {
+        apiUrl += `&name=${searchQuery}`;
+      }
+      const accessToken = localStorage.getItem("accessToken");
+      const response = await axios.get(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        withCredentials: true,
+      });
       const { total, data: teamDatas } = response.data;
- 
+
       setTeams(teamDatas);
       setTotal(total);
+      console.log("teamData=",teamDatas);
+      console.log("total=",total);
     } catch (error) {
       console.error("팀 정보를 불러오는 데 실패했습니다.", error);
       // Clear the teams array in case of an error
@@ -87,6 +87,8 @@ const TeamTable: React.FC = () => {
 
       setTeams(teamDatas);
       setTotal(total);
+      console.log("teamData=",teamDatas);
+      console.log("total=",total);
     } catch (error) {
       console.error("멤버 정보를 불러오는 데 실패했습니다.", error);
     }
@@ -102,8 +104,8 @@ const TeamTable: React.FC = () => {
   };
   const { teamId, setTeamId } = useTeamStore();
   const { id, setUser } = useUserStore();
-  
-  const handleConfirmApply= async () => {
+
+  const handleConfirmApply = async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
       const response = await axios.post(
@@ -118,10 +120,10 @@ const TeamTable: React.FC = () => {
         }
       );
       console.log("Invitation API response:", response.data);
-  
+
       setShowModal(false);
       setSelectedTeam(null);
-  
+
       // Refresh the page after confirmation
       window.location.reload();
     } catch (error) {
@@ -144,7 +146,7 @@ const TeamTable: React.FC = () => {
   return (
     <Layout>
       <div>
-      {showModal && selectedTeam && (
+        {showModal && selectedTeam && (
           <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
               <Modal.Title>초대 확인 메세지</Modal.Title>
@@ -188,19 +190,22 @@ const TeamTable: React.FC = () => {
           </thead>
           <tbody>
             {teams &&
-              teams.map((team) => (
-                <tr key={team.id}>
-                  <td>{team.id}</td>
-                  <td>{team.name}</td>
-                  <td>{team.description}</td>
+              teams.map((teamData, index) => (
+                <tr key={`teamData-${index}`}>
+                  <td>{teamData.id}</td>
+                  <td>{teamData.name}</td>
+                  <td>{teamData.description}</td>
                   <td>
-                    <img src={team.logoImage} alt={`${team.name} 로고`} />
+                    <img
+                      src={teamData.logoImage}
+                      alt={`${teamData.name} 로고`}
+                    />
                   </td>
-                  <td>{team.is_mixed_gender ? "혼성" : "단일 성별"}</td>
-                  <td>{team.gender}</td>
-                  <td>{team.total_members}</td>
+                  <td>{teamData.is_mixed_gender ? "혼성" : "단일 성별"}</td>
+                  <td>{teamData.gender}</td>
+                  <td>{teamData.total_members}</td>
                   <td>
-                    <button onClick={() => handleApplyButton(team)}>
+                    <button onClick={() => handleApplyButton(teamData)}>
                       신청
                     </button>
                   </td>

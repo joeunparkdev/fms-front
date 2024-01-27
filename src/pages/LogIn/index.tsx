@@ -113,6 +113,14 @@ const LogIn = () => {
             아직 회원이 아니신가요?&nbsp;
             <Link to="/signup">회원가입 하러가기</Link>
           </LinkContainer>
+          <LinkContainer className="CenterAlign"> {/* Apply the CenterAlign class here */}
+            비밀번호를 잊으셨나요?&nbsp;
+            <Link to="/code">비밀번호 찾기</Link>
+          </LinkContainer>
+          <LinkContainer className="CenterAlign"> {/* Apply the CenterAlign class here */}
+            &nbsp;
+            <Link to="/home">메인화면으로 돌아가기</Link>
+          </LinkContainer>
           <div
             className="ms-auto"
             style={{ cursor: "pointer", width: "100%"}}>

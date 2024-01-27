@@ -30,6 +30,8 @@ import TeamDetail from "pages/TeamDetail";
 import MemberDetail from "pages/memberDetail";
 import PlayerStatistics from "pages/playerStat";
 import { useTeamStore } from "store/teamStore";
+import ResetPassword from "pages/resetPassword";
+import SendCode from "pages/sendCode";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -54,6 +56,32 @@ const App = () => {
   return (
     <Routes>
       {/* 로그인 안해도 접근 가능한 url */}
+      <Route
+        path="/code"
+        element={
+          <ProtectedRoute>
+            <SendCode />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/password"
+        element={
+          <ProtectedRoute>
+            <ResetPassword />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/home"
+        element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="/login"
@@ -75,7 +103,8 @@ const App = () => {
 
       {isLoggedIn ? (
         <>
-          <Route path="/home" element={<Home />} />
+          {/* <Route path="/home" element={<Home />} /> */}
+
           <Route path="/team" element={<Team />} />
           <Route path="/team/create" element={<CreateTeam />} />
           <Route path="/team/:teamId" element={<TeamDetail />} />
@@ -99,12 +128,10 @@ const App = () => {
           />
           <Route
             path="/match/:matchId/preview"
-            element={<MatchPreview />}
-          ></Route>
+            element={<MatchPreview />}></Route>
           <Route
             path="/match/:matchId/review"
-            element={<MatchReview />}
-          ></Route>
+            element={<MatchReview />}></Route>
 
           <Route path="/match/book" element={<MatchBook />} />
           <Route path="/match/calendar" element={<MatchCalendar />} />
