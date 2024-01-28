@@ -62,7 +62,7 @@ const ProfileTable = () => {
         },
         withCredentials: true,
       });
-      console.log(response.data.data.data);
+
       setProfiles(response.data.data.data);
       setTotal(response.data.data.total);
     } catch (error) {
@@ -91,7 +91,7 @@ const ProfileTable = () => {
       } = await axios.get(
         `http://localhost:${
           process.env.REACT_APP_SERVER_PORT || 3000
-        }/api/profile?page=${page || 1}&name=${searchQuery}`,
+        }/api/profile/available/?page=${page || 1}&name=${searchQuery}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -123,25 +123,32 @@ const ProfileTable = () => {
 
   const handleConfirmInvite = async () => {
     try {
+      const accessToken = localStorage.getItem("accessToken");
       // Make the API call to invite the selected profile to a team //멤버 스토어에서 가져올수있나?
-
       const response = await axios.post(
         `http://localhost:${
           process.env.REACT_APP_SERVER_PORT || 3000
-        }/api/team/${teamId}/user/${selectedProfile?.id}`
+        }/api/team/${teamId}/user/${selectedProfile?.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          withCredentials: true,
+        }
       );
-
-      // Handle the response, e.g., check for success and update UI accordingly
+  
       console.log("Invitation API response:", response.data);
-
-      // Close the modal and reset selectedProfile
+  
       setShowModal(false);
       setSelectedProfile(null);
+  
+      // Refresh the page after confirmation
+      window.location.reload();
     } catch (error) {
       console.error("Error inviting member:", error);
-      // Handle errors if needed
     }
   };
+  
 
   const handleCancelInvite = () => {
     setShowModal(false);
@@ -153,7 +160,6 @@ const ProfileTable = () => {
   };
 
   const handleCheckboxChange = (profileId: number) => {
-    // Toggle the selected state of the profile with the given ID
     setSelectedProfiles((prevSelectedProfiles) => {
       if (prevSelectedProfiles.includes(profileId)) {
         return prevSelectedProfiles.filter((id) => id !== profileId);
@@ -180,7 +186,7 @@ const ProfileTable = () => {
             </Modal.Footer>
           </Modal>
         )}
-        <h2>멤버 정보</h2>
+        ;<h2>멤버 정보</h2>
         <div>
           <div className="search-container">
             <input
@@ -216,16 +222,16 @@ const ProfileTable = () => {
               </th>
               <th>ID</th>
               <th>이름</th>
-              <th>실력</th>
+              {/* <th>실력</th> */}
               <th>몸무게</th>
               <th>키</th>
               <th>선호 포지션</th>
               <th>사진</th>
               <th>나이</th>
               <th>성별</th>
-              <th>스태프 여부</th>
-              {<th>팀 이름</th>}
-              {<th>가입일</th>}
+              {/* <th>스태프 여부</th> */}
+              {/* {<th>팀 이름</th>}
+              {<th>가입일</th>} */}
               <th>신청</th>
             </tr>
           </thead>
@@ -241,22 +247,18 @@ const ProfileTable = () => {
                 </td>
                 <td>{profile.id}</td>
                 <td>{profile.name}</td>
-                <td>{profile.skillLevel}</td>
+                {/* <td>{profile.skillLevel}</td> */}
                 <td>{profile.weight}</td>
                 <td>{profile.height}</td>
                 <td>{profile.preferredPosition}</td>
                 <td>{profile.image_url}</td>
                 <td>{profile.age}</td>
                 <td>{profile.gender}</td>
-                <td>
+                {/* <td>
                   {profile.user.member[0]?.isStaff ? "스태프" : "일반 회원"}
                 </td>
                 <td>{profile.user.member[0]?.team.name}</td>
-                <td>
-                  {new Date(
-                    profile.user.member[0]?.joinDate
-                  ).toLocaleDateString()}
-                </td>
+                <td>{new Date(profile.user.member[0]?.joinDate).toLocaleDateString()}</td> */}
 
                 <td>
                   <button onClick={() => handleInviteButton(profile)}>
@@ -271,11 +273,10 @@ const ProfileTable = () => {
           <button onClick={handleInviteSelected}>선택된 멤버 초대</button>
         </div>
         <Pagination
-          defaultCurrent={currentPage}
-          total={total}
-          defaultPageSize={5}
+          defaultCurrent={currentPage} // 현재 클릭한 페이지
+          total={total} // 데이터 총 개수
+          defaultPageSize={5} // 페이지 당 데이터 개수
           onChange={(value) => {
-            setCurrentPage(value);
             changePage(value);
           }}
         />

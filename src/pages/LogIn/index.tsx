@@ -105,15 +105,21 @@ const LogIn = () => {
               />
             </div>
           </Label>
-          {/* Apply the same styles to both buttons */}
           <Label>
             <StyledButton type="submit">로그인</StyledButton>
           </Label>
-          <LinkContainer className="CenterAlign">
+          <LinkContainer className="CenterAlign"> {/* Apply the CenterAlign class here */}
             아직 회원이 아니신가요?&nbsp;
             <Link to="/signup">회원가입 하러가기</Link>
           </LinkContainer>
-          {/* Apply the same styles to the Kakao login button container */}
+          <LinkContainer className="CenterAlign"> {/* Apply the CenterAlign class here */}
+            비밀번호를 잊으셨나요?&nbsp;
+            <Link to="/emailCode">비밀번호 찾기</Link>
+          </LinkContainer>
+          <LinkContainer className="CenterAlign"> {/* Apply the CenterAlign class here */}
+            &nbsp;
+            <Link to="/home">메인화면으로 돌아가기</Link>
+          </LinkContainer>
           <div
             className="ms-auto kakao-login-container"
             style={{ cursor: "pointer", width: "100%" }}

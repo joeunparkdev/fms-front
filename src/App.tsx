@@ -30,6 +30,8 @@ import TeamDetail from "pages/TeamDetail";
 import MemberDetail from "pages/memberDetail";
 import PlayerStatistics from "pages/playerStat";
 import { useTeamStore } from "store/teamStore";
+import ResetPassword from "pages/resetPassword";
+import SendCode from "pages/sendCode";
 import HomePreview from "pages/HomePreview";
 
 interface ProtectedRouteProps {
@@ -55,6 +57,9 @@ const App = () => {
   return (
     <Routes>
       {/* 로그인 안해도 접근 가능한 url */}
+      <Route path="/emailCode" element={<SendCode />} />
+
+      <Route path="/password" element={<ResetPassword />} />
 
       <Route
         path="/login"
@@ -78,6 +83,7 @@ const App = () => {
       {isLoggedIn ? (
         <>
           <Route path="/home" element={<Home />} />
+
           <Route path="/team" element={<Team />} />
           <Route path="/team/create" element={<CreateTeam />} />
           <Route path="/team/:teamId" element={<TeamDetail />} />
@@ -101,12 +107,10 @@ const App = () => {
           />
           <Route
             path="/match/:matchId/preview"
-            element={<MatchPreview />}
-          ></Route>
+            element={<MatchPreview />}></Route>
           <Route
             path="/match/:matchId/review"
-            element={<MatchReview />}
-          ></Route>
+            element={<MatchReview />}></Route>
 
           <Route path="/match/book" element={<MatchBook />} />
           <Route path="/match/calendar" element={<MatchCalendar />} />
@@ -121,7 +125,8 @@ const App = () => {
           {/* <Route path="/*" element={<NotFound />} /> */}
         </>
       ) : (
-        <Route path="/*" element={<Navigate replace to="/login" />} />
+        // <Route path="/*" element={<Navigate replace to="/login" />} />
+        <></>
       )}
     </Routes>
   );
