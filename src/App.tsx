@@ -56,32 +56,9 @@ const App = () => {
   return (
     <Routes>
       {/* 로그인 안해도 접근 가능한 url */}
-      <Route
-        path="/code"
-        element={
-          <ProtectedRoute>
-            <SendCode />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/emailCode" element={<SendCode />} />
 
-      <Route
-        path="/password"
-        element={
-          <ProtectedRoute>
-            <ResetPassword />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/home"
-        element={
-          <ProtectedRoute>
-            <Home />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/password" element={<ResetPassword />} />
 
       <Route
         path="/login"
@@ -103,7 +80,7 @@ const App = () => {
 
       {isLoggedIn ? (
         <>
-          {/* <Route path="/home" element={<Home />} /> */}
+          <Route path="/home" element={<Home />} />
 
           <Route path="/team" element={<Team />} />
           <Route path="/team/create" element={<CreateTeam />} />
@@ -146,7 +123,8 @@ const App = () => {
           {/* <Route path="/*" element={<NotFound />} /> */}
         </>
       ) : (
-        <Route path="/*" element={<Navigate replace to="/login" />} />
+        // <Route path="/*" element={<Navigate replace to="/login" />} />
+        <></>
       )}
     </Routes>
   );

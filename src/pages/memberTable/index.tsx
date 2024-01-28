@@ -273,11 +273,10 @@ const ProfileTable = () => {
           <button onClick={handleInviteSelected}>선택된 멤버 초대</button>
         </div>
         <Pagination
-          defaultCurrent={currentPage}
-          total={total}
-          defaultPageSize={5}
+          defaultCurrent={currentPage} // 현재 클릭한 페이지
+          total={total} // 데이터 총 개수
+          defaultPageSize={5} // 페이지 당 데이터 개수
           onChange={(value) => {
-            setCurrentPage(value);
             changePage(value);
           }}
         />

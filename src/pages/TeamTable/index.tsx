@@ -11,10 +11,11 @@ interface Team {
   id: number;
   name: string;
   description: string;
-  logoImage: string;
+  imageUUID: string;
   is_mixed_gender: boolean;
   gender: string;
-  total_members: number;
+  totalMember: number;
+  team: Team;
 }
 
 const TeamTable: React.FC = () => {
@@ -42,12 +43,10 @@ const TeamTable: React.FC = () => {
         },
         withCredentials: true,
       });
-      const { total, data: teamDatas } = response.data;
-
-      setTeams(teamDatas);
-      setTotal(total);
-      console.log("teamData=",teamDatas);
-      console.log("total=",total);
+      setTeams(response.data.data);
+      setTotal(response.data.total);
+      console.log("response.data.data=",response.data.data)
+      console.log("esponse.data.total=",response.data.total)
     } catch (error) {
       console.error("팀 정보를 불러오는 데 실패했습니다.", error);
       // Clear the teams array in case of an error
@@ -60,7 +59,8 @@ const TeamTable: React.FC = () => {
     const delay = setTimeout(() => {
       fetchTeams();
     }, 500);
-
+    console.log("teams= ", teams);
+    
     // Clear the timeout on component unmount or when the dependencies change
     return () => clearTimeout(delay);
   }, [currentPage, searchQuery]);
@@ -69,11 +69,7 @@ const TeamTable: React.FC = () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
 
-      const {
-        data: {
-          data: { total, data: teamDatas },
-        },
-      } = await axios.get(
+      const response = await axios.get(
         `http://localhost:${
           process.env.REACT_APP_SERVER_PORT || 3000
         }/api/team/?page=${page || 1}&name=${searchQuery}`,
@@ -84,11 +80,10 @@ const TeamTable: React.FC = () => {
           withCredentials: true,
         }
       );
-
-      setTeams(teamDatas);
-      setTotal(total);
-      console.log("teamData=",teamDatas);
-      console.log("total=",total);
+      setTeams(response.data.data);
+      setTotal(response.data.total);
+      console.log("response.data.data=",response.data.data)
+      console.log("esponse.data.total=",response.data.total)
     } catch (error) {
       console.error("멤버 정보를 불러오는 데 실패했습니다.", error);
     }
@@ -143,6 +138,14 @@ const TeamTable: React.FC = () => {
   const handleSearchButtonClick = () => {
     fetchTeams();
   };
+  teams.map((team) => {
+    console.log("team= ", team.team );
+    console.log("team.id= ", team.team.id);
+    console.log("team.name= ", team.team.name);
+    console.log("team.description= ", team.team.description);
+    console.log("team.logoImage= ", team.team.imageUUID);
+    console.log("team.totalMember", team.totalMember);
+  });
   return (
     <Layout>
       <div>
@@ -188,24 +191,25 @@ const TeamTable: React.FC = () => {
               <th>신청</th>
             </tr>
           </thead>
+
           <tbody>
             {teams &&
-              teams.map((teamData, index) => (
+              teams.map((team, index) => (
                 <tr key={`teamData-${index}`}>
-                  <td>{teamData.id}</td>
-                  <td>{teamData.name}</td>
-                  <td>{teamData.description}</td>
+                  <td>{team.team.id}</td>
+                  <td>{team.team.name}</td>
+                  <td>{team.team.description}</td>
                   <td>
                     <img
-                      src={teamData.logoImage}
-                      alt={`${teamData.name} 로고`}
+                      src={team.team.imageUUID}
+                      alt={`${team.team.name} 로고`}
                     />
                   </td>
-                  <td>{teamData.is_mixed_gender ? "혼성" : "단일 성별"}</td>
-                  <td>{teamData.gender}</td>
-                  <td>{teamData.total_members}</td>
+                  <td>{team.team.is_mixed_gender ? "혼성" : "단일 성별"}</td>
+                  <td>{team.team.gender}</td>
+                  <td>{team.totalMember}</td>
                   <td>
-                    <button onClick={() => handleApplyButton(teamData)}>
+                    <button onClick={() => handleApplyButton(team)}>
                       신청
                     </button>
                   </td>
@@ -213,13 +217,12 @@ const TeamTable: React.FC = () => {
               ))}
           </tbody>
         </table>
-        <Pagination
-          defaultCurrent={currentPage}
-          total={total}
-          defaultPageSize={5}
+           <Pagination
+          defaultCurrent={currentPage} // 현재 클릭한 페이지
+          total={total} // 데이터 총 개수
+          defaultPageSize={5} // 페이지 당 데이터 개수
           onChange={(value) => {
-            setCurrentPage(value);
-            fetchTeams(value);
+            changePage(value);
           }}
         />
         {showModal && selectedTeam && (
