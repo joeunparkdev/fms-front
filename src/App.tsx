@@ -32,6 +32,7 @@ import PlayerStatistics from "pages/playerStat";
 import { useTeamStore } from "store/teamStore";
 import ResetPassword from "pages/resetPassword";
 import SendCode from "pages/sendCode";
+import HomePreview from "pages/HomePreview";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -77,7 +78,8 @@ const App = () => {
         }
       />
       <Route path="/kakaoSuccess" element={<KakaoSuccess />} />
-
+      {/* 미리보기 페이지 */}
+      <Route path="/preview/home" element={<HomePreview />} />
       {isLoggedIn ? (
         <>
           <Route path="/home" element={<Home />} />

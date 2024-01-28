@@ -16,7 +16,9 @@ const KakaoSuccess = () => {
     if (code) {
       axios
         .post(
-          "http://localhost:3000/api/auth/kakao/callback/code",
+          `http://localhost:${
+            process.env.REACT_APP_SERVER_PORT || 3000
+          }/api/auth/kakao/callback/code`,
           { code: code },
           {
             headers: {
