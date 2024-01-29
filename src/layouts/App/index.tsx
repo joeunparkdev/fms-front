@@ -52,7 +52,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       setTeamInfo(
         data.data.member[0]?.team?.id,
         data.data.member[0]?.team?.name,
-        data.data.member[0]?.team?.imageUUID
+        data.data.member[0]?.team?.imageUUID,
+        data.data.member[0]?.team?.chhat?.id
       );
       console.log(data.data);
       // setTeamId(data.data.member[0]?.team?.id);
