@@ -160,13 +160,14 @@ const accessToken = localStorage.getItem("accessToken");
     field_name : string;
     name: string,
     date: string,
-    time: string
+    time: string,
+    matchId: number
   }
+
+  const [selectedMatchId, setSelectedMatchId] = useState<number>(0);
 
   const getScheldule = async () => {
     try {
-
-      console.log('teamId:'+teamId);
       const response = await axios.get(`http://localhost:${
         process.env.REACT_APP_SERVER_PORT || 3000
       }/api/match/team/schedule/`+teamId, {
@@ -186,10 +187,9 @@ const accessToken = localStorage.getItem("accessToken");
           field_name: team.field_name,
           name: team.name,
           date: team.date,
-          time: team.time
+          time: team.time,
+          matchId: team.match_id
         }));
-
-        console.log(`newEventDates ${newEventDates}`);
 
         setEventDates(newEventDates); // 상태 업데이트
         setScheldules(newSchelduleInfo); 
@@ -211,6 +211,11 @@ const accessToken = localStorage.getItem("accessToken");
     // 선택된 날짜에 해당하는 스케줄 찾기
     const daySchedules = schedules.filter(sch => sch.date === formattedDate);
 
+    // 선택된 날짜에 해당하는 첫 번째 스케줄의 matchId를 저장
+    if (daySchedules.length > 0) {
+      setSelectedMatchId(daySchedules[0].matchId); // matchId를 상태에 저장
+    }
+
     // 모달 내용 구성
     const scheduleContent = daySchedules.map(sch=> (
       <div key={sch.date}>
@@ -230,14 +235,18 @@ const accessToken = localStorage.getItem("accessToken");
     setShowModal(true);
   };
 
+  // 전술 설정 페이지로 이동하는 함수
+  const handleTacticSetting = () => {
+    navigate("/match/formation/",
+    {state:{matchId:selectedMatchId}}); // matchId를 URL에 포함하여 페이지 이동
+  };
+
   const handleCloseModal = () => setShowModal(false);
 
   // 달력 내 각 날짜의 내용을 렌더링하는 함수입니다.
   const renderDayContents = (day: number, date: Date): JSX.Element => {
     const formattedDate = format(date, 'yyyy-MM-dd');
     const imageUrl = eventDates[formattedDate];
-
-    console.log("imageUrl:",imageUrl);
   
     return (
       <div onClick={() => handleDayClick(date)} style={{
@@ -288,6 +297,9 @@ const accessToken = localStorage.getItem("accessToken");
         </Modal.Header>
         <Modal.Body>{modalContent}</Modal.Body>
         <Modal.Footer>
+          <Button variant="primary" onClick={handleTacticSetting}>
+            전술 설정
+          </Button>
           <Button variant="secondary" onClick={handleCloseModal}>
             닫기
           </Button>
