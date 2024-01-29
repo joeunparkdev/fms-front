@@ -37,11 +37,11 @@ export interface Position {
         ],
         goalkeeper: { x: '40%', y: '85%' }, // GK
         positionNames: {
-          defenders: ['CB', 'CB', 'CB'],
-          midfielders: ['LM', 'CM', 'CM', 'RM'],
-          attackers: ['LW', 'CF', 'RW'],
+          defenders: ['LCB', 'CB', 'RCB'],
+          midfielders: ['LM', 'LCM', 'RCM', 'RM'],
+          attackers: ['LF', 'ST', 'RF'],
           goalkeeper: 'GK',
-        },
+        }
       },
       '3-4-1-2': {
         attackers: [
@@ -62,11 +62,11 @@ export interface Position {
         ],
         goalkeeper: { x: '40%', y: '85%' }, // GK
         positionNames: {
-          defenders: ['CB', 'CB', 'CB'],
-          midfielders: ['LM', 'CM', 'AM', 'CM', 'RM'],
-          attackers: ['CF', 'CF'],
-          goalkeeper: 'GK',
-        },
+          defenders: ['LCB', 'CB', 'RCB'],
+          midfielders: ['LM', 'LCM', 'CAM', 'RCM', 'RM'],
+          attackers: ['LS', 'RS'],
+          goalkeeper: 'GK'
+        }
       },
       '4-1-4-1': {
         attackers: [
@@ -87,11 +87,11 @@ export interface Position {
         ],
         goalkeeper: { x: '40%', y: '85%' }, // GK
         positionNames: {
-          defenders: ['LB', 'CB', 'CB', 'RB'],
-          midfielders: ['LM', 'CM', 'CM', 'RM', 'CDM'],
-          attackers: ['CF'],
-          goalkeeper: 'GK',
-        },
+          defenders: ['LB', 'LCB', 'RCB', 'RB'],
+          midfielders: ['LM', 'LCM', 'CDM', 'RCM', 'RM'],
+          attackers: ['ST'],
+          goalkeeper: 'GK'
+        }
       },
       '4-2-3-1': {
         attackers: [
@@ -112,11 +112,11 @@ export interface Position {
         ],
         goalkeeper: { x: '40%', y: '85%' }, // GK
         positionNames: {
-          defenders: ['LB', 'CB', 'CB', 'RB'],
-          midfielders: ['LM', 'CM', 'RM', 'CDM', 'CDM'],
-          attackers: ['CF'],
-          goalkeeper: 'GK',
-        },
+          defenders: ['LB', 'LCB', 'RCB', 'RB'],
+          midfielders: ['LDM', 'RDM', 'CAM', 'LAM', 'RAM'],
+          attackers: ['ST'],
+          goalkeeper: 'GK'
+        }
       },
       '4-2-4': {
         attackers: [
@@ -137,11 +137,11 @@ export interface Position {
           ],
           goalkeeper: { x: '40%', y: '85%' }, // GK
           positionNames: {
-            defenders: ['LB', 'CB', 'CB', 'RB'],
-            midfielders: ['CM', 'CM'],
-            attackers: ['LW', 'CF', 'CF', 'RW'],
-            goalkeeper: 'GK',
-          },
+            defenders: ['LB', 'LCB', 'RCB', 'RB'],
+            midfielders: ['LCM', 'RCM'],
+            attackers: ['LW', 'LS', 'RS', 'RW'],
+            goalkeeper: 'GK'
+          }
     },
     '4-3-3': {
         attackers: [
@@ -162,11 +162,12 @@ export interface Position {
           ],
           goalkeeper: { x: '40%', y: '85%' }, // GK
           positionNames: {
-            defenders: ['LB', 'CB', 'CB', 'RB'],
-            midfielders: ['CM', 'CM', 'CM'],
-            attackers: ['LW', 'CF', 'RW'],
-            goalkeeper: 'GK',
-          },
+            defenders: ['LB', 'LCB', 'RCB', 'RB'],
+            midfielders: ['LCM', 'CM', 'RCM'],
+            attackers: ['LW', 'ST', 'RW'],
+            goalkeeper: 'GK'
+          }
+          
     },
     '4-4-1-1': {
         attackers: [
@@ -187,11 +188,12 @@ export interface Position {
         ],
         goalkeeper: { x: '40%', y: '85%' }, // GK
         positionNames: {
-          defenders: ['LB', 'CB', 'CB', 'RB'],
-          midfielders: ['LM', 'CM', 'CM', 'RM'],
-          attackers: ['Second Striker', 'CF'],
-          goalkeeper: 'GK',
-        },
+          defenders: ['LB', 'LCB', 'RCB', 'RB'],
+          midfielders: ['LM', 'LCM', 'RCM', 'RM'],
+          attackers: ['CAM','ST'],
+          goalkeeper: 'GK'
+        }
+        
       },
       '4-4-2': {
         attackers: [
@@ -212,11 +214,12 @@ export interface Position {
         ],
         goalkeeper: { x: '40%', y: '85%' }, // GK
         positionNames: {
-          defenders: ['LB', 'CB', 'CB', 'RB'],
-          midfielders: ['LM', 'CM', 'CM', 'RM'],
-          attackers: ['CF', 'CF'],
-          goalkeeper: 'GK',
-        },
+          defenders: ['LB', 'LCB', 'RCB', 'RB'],
+          midfielders: ['LM', 'LCM', 'RCM', 'RM'],
+          attackers: ['ST', 'CF'],
+          goalkeeper: 'GK'
+        }
+        
       },
     '4-5-1': {
         attackers: [
@@ -238,11 +241,11 @@ export interface Position {
         ],
         goalkeeper: { x: '40%', y: '85%' }, // GK
         positionNames: {
-        defenders: ['LB', 'CB', 'CB', 'RB'],
-        midfielders: ['LM', 'CM', 'CM', 'CM', 'RM'],
-        attackers: ['CF'],
-        goalkeeper: 'GK',
-        },
+          defenders: ['LB', 'LCB', 'RCB', 'RB'],
+          midfielders: ['LM', 'LCM', 'CM', 'RCM', 'RM'],
+          attackers: ['ST'],
+          goalkeeper: 'GK',
+        }
     },
     '5-3-2': {
         attackers: [
@@ -263,11 +266,12 @@ export interface Position {
         ],
         goalkeeper: { x: '40%', y: '85%' }, // GK
         positionNames: {
-        defenders: ['LWB', 'CB', 'CB', 'CB', 'RWB'],
-        midfielders: ['CM', 'CM', 'CM'],
-        attackers: ['CF', 'CF'],
-        goalkeeper: 'GK',
-        },
+          defenders: ['LWB', 'LCB', 'CB', 'RCB', 'RWB'],
+          midfielders: ['LCM', 'CM', 'RCM'],
+          attackers: ['LS', 'RS'],
+          goalkeeper: 'GK',
+        }
+        
     },
     '5-4-1': {
         attackers: [
@@ -288,11 +292,12 @@ export interface Position {
         ],
         goalkeeper: { x: '40%', y: '85%' }, // GK
         positionNames: {
-        defenders: ['LWB', 'CB', 'CB', 'CB', 'RWB'],
-        midfielders: ['LM', 'CM', 'CM', 'RM'],
-        attackers: ['CF'],
-        goalkeeper: 'GK',
-        },
+          defenders: ['LWB', 'LCB', 'CB', 'RCB', 'RWB'],
+          midfielders: ['LM', 'LCM', 'RCM', 'RM'],
+          attackers: ['ST'],
+          goalkeeper: 'GK',
+        }
+        
     },
   };
   

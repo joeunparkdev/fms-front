@@ -53,7 +53,7 @@ export const updateAccessToken = async () => {
   updateAuthToken();
 };
 
-// 파일 포함 axios
+// 파일 포함 axios3
 export const imgAxios = axios.create({
   baseURL: BASE_URL,
   headers: {

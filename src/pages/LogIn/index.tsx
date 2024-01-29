@@ -59,9 +59,8 @@ const LogIn = () => {
   // const CLIENT_ID = `${process.env.KAKAO_API_KEY}`;
   // const REDIRECT_URI = `${process.env.KAKAO_CALLBACK_URL}`;
   const CLIENT_ID = "87e81e12dd9ec54f482031c186a83318";
-  const REDIRECT_URI = "http://localhost:3000/api/auth/kakao/callback";
+  const REDIRECT_URI = "http://localhost:3001/api/auth/kakao/callback";
   const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-
   const onKakaoLoginClick = async () => {
     window.location.href = kakaoURL;
   };
@@ -122,8 +121,9 @@ const LogIn = () => {
             <Link to="/home">메인화면으로 돌아가기</Link>
           </LinkContainer>
           <div
-            className="ms-auto"
-            style={{ cursor: "pointer", width: "100%"}}>
+            className="ms-auto kakao-login-container"
+            style={{ cursor: "pointer", width: "100%" }}
+          >
             <img
               src="img/kakao_login_image.png"
               alt="카카오 로그인"
