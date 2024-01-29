@@ -69,7 +69,7 @@ const SignUp = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:${process.env.REACT_APP_SERVER_PORT || 3000}/api/auth/sign-up`,
+        `http://localhost:${process.env.REACT_APP_SERVER_PORT || 3000}/api/auth/sign-up-verification`,
         {
           email,
           name,
@@ -90,33 +90,49 @@ const SignUp = () => {
   };
 
   const sendVerificationCode = async () => {
-    alert("Verification code sent!");
-    setVerificationSent(true);
-  
-    // Set the verification timer
-    setVerificationTimer(setInterval(() => {
-      setVerificationTimeRemaining((prev) => Math.max(0, prev - 1));
-    }, 1000) as unknown as number);
-  };
-
-    useEffect(() => {
-      // Cleanup the timer when the component unmounts
-      return () => {
-        if (verificationTimer) {
-          clearInterval(verificationTimer);
+    try {
+      const response = await axios.post(
+        `http://localhost:${process.env.REACT_APP_SERVER_PORT || 3000}/api/auth/send-code`,
+        { email },
+        {
+          withCredentials: true,
         }
-      };
-    }, [verificationTimer]);
+      );
+      console.log(response);
+      alert("Verification code sent!");
+      setVerificationSent(true);
+
+      // Set the verification timer
+      setVerificationTimer(setInterval(() => {
+        setVerificationTimeRemaining((prev) => Math.max(0, prev - 1));
+      }, 1000) as unknown as number);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to send verification code.");
+    }
+  };
     
 
-  const verifyCode = () => {
-    // Your verification code logic here
-
-    // Reset verification state and timer
-    setVerificationSent(false);
-    setVerificationTimeRemaining(180);
-    if (verificationTimer) {
-      clearInterval(verificationTimer);
+  const verifyCode = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:${process.env.REACT_APP_SERVER_PORT || 3000}/api/auth/verify-code`,
+        { verificationCode },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response);
+      alert("Verification code verified!");
+      // Reset verification state and timer
+      setVerificationSent(false);
+      setVerificationTimeRemaining(180);
+      if (verificationTimer) {
+        clearInterval(verificationTimer);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Failed to verify the code.");
     }
   };
 
