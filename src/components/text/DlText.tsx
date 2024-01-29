@@ -2,7 +2,7 @@ import './dl-text.css';
 
 interface DlTextType {
     title: string;
-    content: string;
+    content: number | string;
     className?: string;
 }
 

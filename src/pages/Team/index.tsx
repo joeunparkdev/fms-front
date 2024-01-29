@@ -13,6 +13,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTeamStore } from 'store/teamStore';
 import styled from 'styled-components';
 import './team.css';
+import useSWR from 'swr';
+import fetcher from 'utils/fetcher';
 
 const Button = styled.button`
     padding: 10px 20px;
@@ -56,6 +58,15 @@ interface TeamDetailType {
     };
 }
 
+interface TeamStatsType {
+    id: number;
+    team_id: number;
+    wins: number;
+    loses: number;
+    draws: number;
+    total_games: number;
+}
+
 export interface MemberListType {
     id: number;
     isStaff: boolean;
@@ -76,8 +87,9 @@ const Team = () => {
     const [isCreator, setIsCreator] = useState(false);
     const [loading, setLoading] = useState(true);
     const [temaData, setTeamData] = useState<TeamDetailType | null>(null);
-    const { teamId, setTeamId } = useTeamStore();
+    const { teamId } = useTeamStore();
     const [memberList, setMemberList] = useState<MemberListType[]>([]);
+    const [teamStats, setTeamStats] = useState<TeamStatsType>();
     const navigate = useNavigate();
 
     const test2: MyResponsiveRadarType = {
@@ -166,6 +178,7 @@ const Team = () => {
             navigate('/login');
             return;
         }
+
         // 구단주 체크를 수행하는 함수
         const checkIfIsCreator = async () => {
             try {
@@ -201,8 +214,7 @@ const Team = () => {
                     alert('일치하는 데이터가 없습니다');
                 }
 
-                console.log(response.data);
-                setTeamData(response.data);
+                setTeamData(response.data.team);
             } catch (err) {
                 alert(err);
             }
@@ -213,17 +225,30 @@ const Team = () => {
                 `http://localhost:${process.env.REACT_APP_SERVER_PORT || 3000}/api/team/${teamId}/members`
             );
 
-            console.log(members, '회원 조회');
             return members;
+        };
+
+        const getTemaStats = async () => {
+            const getStats = await axios.get<TeamStatsType>(
+                `http://localhost:${process.env.REACT_APP_SERVER_PORT || 3000}/api/statistics/${teamId}`,
+                {
+                    params: {
+                        teamId,
+                    },
+                }
+            );
+
+            setTeamStats(getStats.data);
+            console.log(teamStats?.wins);
         };
 
         const loadPage = async () => {
             if (teamId) {
                 await getTeam();
                 await checkIfIsCreator();
-                const memberList = await getMemberList();
-
-                setMemberList(memberList.data);
+                const getMembers = await getMemberList();
+                await getTemaStats();
+                setMemberList(getMembers.data);
             }
         };
 
@@ -256,7 +281,6 @@ const Team = () => {
                             </div>
                             <div>
                                 <div className="team-div">
-                                    <h5>2023</h5>
                                     {/* <Dropdown>
                                         <Dropdown.Toggle variant="success" id="dropdown-basic">
                                             년도
@@ -268,14 +292,30 @@ const Team = () => {
                                     </Dropdown> */}
                                 </div>
                                 <div className="team-div">
-                                    <DlText title="승" content="2" className="team-dl" />
-                                    <DlText title="무" content="2" className="team-dl" />
-                                    <DlText title="패" content="2" className="team-dl" />
+                                    <DlText
+                                        title="승"
+                                        content={teamStats?.wins ? teamStats?.wins : 0}
+                                        className="team-dl"
+                                    />
+                                    <DlText
+                                        title="무"
+                                        content={teamStats?.draws ? teamStats?.draws : 0}
+                                        className="team-dl"
+                                    />
+                                    <DlText
+                                        title="패"
+                                        content={teamStats?.loses ? teamStats?.loses : 0}
+                                        className="team-dl"
+                                    />
                                 </div>
                                 <div className="team-div">
-                                    <DlText title="득점" content="2" className="team-dl" />
-                                    <DlText title="실점" content="2" className="team-dl" />
-                                    <DlText title="경기" content="2" className="team-dl" />
+                                    <DlText title="득점" content={2} className="team-dl" />
+                                    <DlText title="실점" content={2} className="team-dl" />
+                                    <DlText
+                                        title="경기"
+                                        content={teamStats?.total_games ? teamStats?.total_games : 0}
+                                        className="team-dl"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -357,9 +397,7 @@ const Team = () => {
                         </Card>
                     </CardGroup>
                 </Card>
-                <Card className="card-div">
-                    <PlaneTable data={memberList} />
-                </Card>
+                <Card className="card-div">{memberList && <PlaneTable data={memberList} />}</Card>
             </ScoreboardContainer>
             <Button onClick={() => navigate('/match/calendar')}>경기 일정</Button>
             <br />
