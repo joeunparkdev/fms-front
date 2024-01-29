@@ -45,8 +45,8 @@ const TeamTable: React.FC = () => {
       });
       setTeams(response.data.data);
       setTotal(response.data.total);
-      console.log("response.data.data=",response.data.data)
-      console.log("esponse.data.total=",response.data.total)
+      console.log("response.data.data=", response.data.data);
+      console.log("esponse.data.total=", response.data.total);
     } catch (error) {
       console.error("팀 정보를 불러오는 데 실패했습니다.", error);
       // Clear the teams array in case of an error
@@ -60,7 +60,7 @@ const TeamTable: React.FC = () => {
       fetchTeams();
     }, 500);
     console.log("teams= ", teams);
-    
+
     // Clear the timeout on component unmount or when the dependencies change
     return () => clearTimeout(delay);
   }, [currentPage, searchQuery]);
@@ -82,8 +82,8 @@ const TeamTable: React.FC = () => {
       );
       setTeams(response.data.data);
       setTotal(response.data.total);
-      console.log("response.data.data=",response.data.data)
-      console.log("esponse.data.total=",response.data.total)
+      console.log("response.data.data=", response.data.data);
+      console.log("esponse.data.total=", response.data.total);
     } catch (error) {
       console.error("멤버 정보를 불러오는 데 실패했습니다.", error);
     }
@@ -139,7 +139,7 @@ const TeamTable: React.FC = () => {
     fetchTeams();
   };
   teams.map((team) => {
-    console.log("team= ", team.team );
+    console.log("team= ", team.team);
     console.log("team.id= ", team.team.id);
     console.log("team.name= ", team.team.name);
     console.log("team.description= ", team.team.description);
@@ -217,7 +217,7 @@ const TeamTable: React.FC = () => {
               ))}
           </tbody>
         </table>
-           <Pagination
+        <Pagination
           defaultCurrent={currentPage} // 현재 클릭한 페이지
           total={total} // 데이터 총 개수
           defaultPageSize={5} // 페이지 당 데이터 개수
