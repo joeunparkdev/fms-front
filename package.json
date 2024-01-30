@@ -75,6 +75,7 @@
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.9",
     "@types/react-datepicker": "^4.19.5",
+    "@types/react-mentions": "^4.1.13",
     "typescript": "^4.9.5"
   }
 }
