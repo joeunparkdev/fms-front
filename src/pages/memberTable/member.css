@@ -1,0 +1,21 @@
+
+/* 테이블 전체 스타일 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+/* 테이블 헤더 스타일 */
+th {
+  background-color: #3498db;
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-weight: bold;
+  border: 1px solid #2980b9;
+}
+
+.search-container {
+  margin-bottom: 20px; 
+}
