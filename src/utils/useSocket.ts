@@ -4,13 +4,12 @@ import io from "socket.io-client";
 
 const backUrl = "http://localhost:3000";
 
-const useSocket = (teamId?: number): [Socket | null, () => void, boolean] => {
+const useSocket = (chatId?: number): [Socket | null, () => void, boolean] => {
   const socket = useRef<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-
   useEffect(() => {
-    if (teamId && !socket.current) {
-      socket.current = io(`${backUrl}/chats/${teamId}`, {
+    if (chatId && !socket.current) {
+      socket.current = io(`${backUrl}/chats/${chatId}`, {
         transports: ["websocket"],
         query: {
           token: localStorage.getItem("accessToken"),
@@ -32,7 +31,7 @@ const useSocket = (teamId?: number): [Socket | null, () => void, boolean] => {
         socket.current = null;
       }
     };
-  }, [teamId]);
+  }, [chatId]);
 
   const disconnect = () => {
     if (socket.current) {

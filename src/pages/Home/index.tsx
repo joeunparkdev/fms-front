@@ -23,7 +23,7 @@ import styled from "styled-components";
 // const StyledBooststrapButton = styled(Button)``;
 
 const Home = () => {
-  const { teamId, name: teamName } = useTeamStore();
+  const { teamId, name: teamName, chatId } = useTeamStore();
   const { id: userId, setUser } = useUserStore();
   const { data: chatDatas } = useSWRInfinite(
     () => `/chats/${teamId}/messages`,
@@ -34,7 +34,7 @@ const Home = () => {
   const [chat, setChat] = useState("");
 
   const [messages, setMessages] = useState<any[]>([]);
-  const [socket] = useSocket(teamId);
+  const [socket] = useSocket(chatId);
 
   const messagesEndRef = useRef<HTMLDivElement>(null); // 스크롤을 위한 ref 생성
 
