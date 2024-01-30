@@ -25,7 +25,7 @@ const MyResponsiveRadar = ({ data }: any) => {
                 dotColor={{ theme: 'background' }}
                 dotBorderWidth={2}
                 colors={{ scheme: 'nivo' }}
-                blendMode="multiply"
+                blendMode="normal"
                 motionConfig="wobbly"
                 legends={[
                     {
@@ -33,7 +33,7 @@ const MyResponsiveRadar = ({ data }: any) => {
                         direction: 'column',
                         translateX: -50,
                         translateY: -40,
-                        itemWidth: 80,
+                        itemWidth: 50,
                         itemHeight: 20,
                         itemTextColor: '#999',
                         symbolSize: 12,

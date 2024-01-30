@@ -15,6 +15,7 @@ import styled from 'styled-components';
 import './team.css';
 import useSWR from 'swr';
 import fetcher from 'utils/fetcher';
+import MyResponsivePie, { MyResponsivePieType } from 'components/graph/MyResponsePie';
 
 const Button = styled.button`
     padding: 10px 20px;
@@ -58,13 +59,13 @@ interface TeamDetailType {
     };
 }
 
-interface TeamStatsType {
-    id: number;
-    team_id: number;
+export interface TeamStatsType {
     wins: number;
     loses: number;
     draws: number;
-    total_games: number;
+    totalGames: number;
+    goals: number;
+    conceded: number;
 }
 
 export interface MemberListType {
@@ -96,7 +97,7 @@ const Team = () => {
         data: [
             {
                 stats: '골',
-                myTeam: 91,
+                myTeam: 44,
                 avgTeam: 66,
             },
             {
@@ -281,17 +282,6 @@ const Team = () => {
                             </div>
                             <div>
                                 <div className="team-div">
-                                    {/* <Dropdown>
-                                        <Dropdown.Toggle variant="success" id="dropdown-basic">
-                                            년도
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item>2022</Dropdown.Item>
-                                            <Dropdown.Item>2021</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown> */}
-                                </div>
-                                <div className="team-div">
                                     <DlText
                                         title="승"
                                         content={teamStats?.wins ? teamStats?.wins : 0}
@@ -307,13 +297,22 @@ const Team = () => {
                                         content={teamStats?.loses ? teamStats?.loses : 0}
                                         className="team-dl"
                                     />
+                                    <DlText title="승률" data={teamStats} className="team-dl" />
                                 </div>
                                 <div className="team-div">
-                                    <DlText title="득점" content={2} className="team-dl" />
-                                    <DlText title="실점" content={2} className="team-dl" />
+                                    <DlText
+                                        title="득점"
+                                        content={teamStats?.goals ? teamStats?.goals : 0}
+                                        className="team-dl"
+                                    />
+                                    <DlText
+                                        title="실점"
+                                        content={teamStats?.conceded ? teamStats?.conceded : 0}
+                                        className="team-dl"
+                                    />
                                     <DlText
                                         title="경기"
-                                        content={teamStats?.total_games ? teamStats?.total_games : 0}
+                                        content={teamStats?.totalGames ? teamStats?.totalGames : 0}
                                         className="team-dl"
                                     />
                                 </div>
@@ -325,7 +324,8 @@ const Team = () => {
                     <TitleText title="시즌통계" />
                     <div className="team-info-graph">
                         <MyResponsiveRadar data={test2.data}></MyResponsiveRadar>
-                        <MyResponsiveLine data={test3.data}></MyResponsiveLine>
+                        <MyResponsiveRadar data={test2.data}></MyResponsiveRadar>
+                        {/* <MyResponsiveLine data={test3.data}></MyResponsiveLine> */}
                     </div>
                 </Card>
                 <Card className="card-div">
